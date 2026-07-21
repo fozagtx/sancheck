@@ -37,7 +37,7 @@ class MiddlewareCliTests(unittest.TestCase):
             [
                 sys.executable,
                 "-m",
-                "sancheck",
+                "seccheck",
                 "middleware",
                 "--no-threat-intel",
                 "--no-domain-age",

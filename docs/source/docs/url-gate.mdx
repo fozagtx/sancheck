@@ -5,15 +5,15 @@ description: How URLs are extracted, validated, and gated.
 
 # URL Gate
 
-The URL gate is the core of sancheck. It extracts URLs from any text, validates them against multiple security checks, and returns a machine-readable allow or block decision.
+The URL gate is the core of seccheck. It extracts URLs from any text, validates them against multiple security checks, and returns a machine-readable allow or block decision.
 
 ## URL Extraction
 
-sancheck extracts URLs using a regex that matches `http://` and `https://` schemes, as well as `www.` prefixes. Trailing punctuation is stripped.
+seccheck extracts URLs using a regex that matches `http://` and `https://` schemes, as well as `www.` prefixes. Trailing punctuation is stripped.
 
 ```python
 # Example: extract URLs from text
-from sancheck.url_utils import extract_urls
+from seccheck.url_utils import extract_urls
 
 urls = extract_urls("Check https://example.com and http://test.org")
 # ["https://example.com", "http://test.org"]

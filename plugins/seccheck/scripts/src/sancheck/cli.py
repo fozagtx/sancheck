@@ -68,7 +68,7 @@ def _dedupe_urls(urls: Iterable[str]) -> List[str]:
 def _reports_payload(reports: List[ScanReport], allow_verdict: str, mode: str) -> Dict[str, Any]:
     blocked = [report for report in reports if not _allowed_by_policy(report, allow_verdict) or not report.allowed_for_agent]
     return {
-        "tool": "sancheck",
+        "tool": "seccheck",
         "mode": mode,
         "allowed": len(blocked) == 0,
         "decision": "allow" if len(blocked) == 0 else "block",
@@ -227,5 +227,5 @@ def main(argv: List[str] = None) -> int:
     except KeyboardInterrupt:
         return 130
     except Exception as exc:
-        print("sancheck: %s: %s" % (exc.__class__.__name__, exc), file=sys.stderr)
+        print("seccheck: %s: %s" % (exc.__class__.__name__, exc), file=sys.stderr)
         return 1

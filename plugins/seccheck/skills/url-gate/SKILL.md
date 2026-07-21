@@ -1,16 +1,16 @@
 ---
-name: sancheck-url-gate
-description: Gate URLs with the bundled sancheck scanner before an agent opens, fetches, summarizes, or acts on untrusted links.
+name: seccheck-url-gate
+description: Gate URLs with the bundled seccheck scanner before an agent opens, fetches, summarizes, or acts on untrusted links.
 ---
 
-# sancheck URL Gate
+# seccheck URL Gate
 
 Use this skill whenever a task includes external links or asks you to open, fetch, summarize, inspect, crawl, or act on an untrusted URL.
 
 ## Workflow
 
 1. Resolve the plugin root as the directory two levels above this `SKILL.md`.
-2. Send the untrusted text, prompt, JSON payload, or URL list to `scripts/sancheck-gate`.
+2. Send the untrusted text, prompt, JSON payload, or URL list to `scripts/seccheck-gate`.
 3. Continue only when the command exits `0` and the JSON payload has `"allowed": true`.
 4. If the command exits `2`, do not open blocked URLs. Report the blocked URLs and the highest-signal findings.
 5. If the command exits `1`, treat the gate as failed closed and ask for user direction before using the URL.
@@ -18,13 +18,13 @@ Use this skill whenever a task includes external links or asks you to open, fetc
 ## Command
 
 ```sh
-printf '%s\n' "$UNTRUSTED_TEXT_OR_JSON" | "$PLUGIN_ROOT/scripts/sancheck-gate"
+printf '%s\n' "$UNTRUSTED_TEXT_OR_JSON" | "$PLUGIN_ROOT/scripts/seccheck-gate"
 ```
 
 Direct URL form:
 
 ```sh
-"$PLUGIN_ROOT/scripts/sancheck-gate" https://example.com
+"$PLUGIN_ROOT/scripts/seccheck-gate" https://example.com
 ```
 
 The gate emits JSON with `decision`, `allowed`, `blocked_urls`, and full `reports`. Exit code `2` means at least one URL failed policy.

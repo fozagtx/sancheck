@@ -5,7 +5,7 @@ description: Customize scanner options and provider keys.
 
 # Configuration
 
-sancheck provides a range of options to customize the scanner behavior. All options can be set via CLI flags or environment variables.
+seccheck provides a range of options to customize the scanner behavior. All options can be set via CLI flags or environment variables.
 
 ## CLI Options
 
@@ -34,7 +34,7 @@ sancheck provides a range of options to customize the scanner behavior. All opti
 
 ## Provider Keys
 
-sancheck supports optional live provider lookups. Set these environment variables to enable the corresponding provider:
+seccheck supports optional live provider lookups. Set these environment variables to enable the corresponding provider:
 
 ### Google Safe Browsing
 
@@ -70,7 +70,7 @@ Reports verified phishing URLs.
 ## Example: Custom Configuration
 
 ```bash
-PYTHONPATH=src python3 -m sancheck scan https://example.com \
+PYTHONPATH=src python3 -m seccheck scan https://example.com \
   --timeout 10.0 \
   --max-redirects 3 \
   --max-bytes 32768 \
@@ -84,7 +84,7 @@ PYTHONPATH=src python3 -m sancheck scan https://example.com \
 export GOOGLE_SAFE_BROWSING_API_KEY="..."
 export VIRUSTOTAL_API_KEY="..."
 
-PYTHONPATH=src python3 -m sancheck scan https://example.com --format json
+PYTHONPATH=src python3 -m seccheck scan https://example.com --format json
 ```
 
 ## Next Steps

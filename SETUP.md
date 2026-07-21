@@ -1,4 +1,4 @@
-# sancheck - Complete Setup Guide
+# seccheck - Complete Setup Guide
 
 ## What's Been Built
 
@@ -58,17 +58,17 @@ npm run start
 
 ### 3. Codex Plugin Package ✅
 
-The plugin package at `plugins/sancheck/` is complete with:
+The plugin package at `plugins/seccheck/` is complete with:
 - **Plugin Manifest** (`.codex-plugin/plugin.json`) - Plugin metadata and configuration
 - **URL Gate Skill** (`skills/url-gate/SKILL.md`) - Skill instructions for the agent
-- **Gate Script** (`scripts/sancheck-gate`) - Entry point shell script
-- **Bundled Scanner** (`scripts/src/sancheck/`) - Complete scanner source
+- **Gate Script** (`scripts/seccheck-gate`) - Entry point shell script
+- **Bundled Scanner** (`scripts/src/seccheck/`) - Complete scanner source
 - **Assets** (`assets/`) - Logo and favicon
 
 ## Project Structure
 
 ```
-sancheck/
+seccheck/
 ├── src/                          # Main landing page (Vite + React)
 │   ├── App.tsx                   # Enhanced landing page with feature grid
 │   ├── main.tsx                  # Entry point
@@ -95,17 +95,17 @@ sancheck/
 │   ├── source.config.ts          # MDX configuration
 │   ├── next.config.ts            # Next.js configuration
 │   └── package.json              # Docs dependencies
-├── plugins/sancheck/             # Codex plugin package
+├── plugins/seccheck/             # Codex plugin package
 │   ├── .codex-plugin/
 │   │   └── plugin.json           # Plugin manifest
 │   ├── skills/
 │   │   └── url-gate/
 │   │       └── SKILL.md          # URL gate skill
 │   ├── scripts/
-│   │   ├── sancheck-gate         # Gate script
-│   │   └── src/sancheck/         # Bundled scanner
+│   │   ├── seccheck-gate         # Gate script
+│   │   └── src/seccheck/         # Bundled scanner
 │   └── assets/                   # Plugin assets
-├── src/sancheck/                 # Python scanner source
+├── src/seccheck/                 # Python scanner source
 │   ├── scanner.py                # Main scanner
 │   ├── cli.py                    # CLI interface
 │   ├── models.py                 # Data models
@@ -133,13 +133,13 @@ npm run dev
 ### Use the Plugin
 ```bash
 # Scan a URL
-PYTHONPATH=src python3 -m sancheck scan https://example.com
+PYTHONPATH=src python3 -m seccheck scan https://example.com
 
 # Use the gate
-printf 'check https://example.com' | ./scripts/sancheck-gate
+printf 'check https://example.com' | ./scripts/seccheck-gate
 
 # Use the plugin
-printf '{"text":"open https://example.com"}' | plugins/sancheck/scripts/sancheck-gate
+printf '{"text":"open https://example.com"}' | plugins/seccheck/scripts/seccheck-gate
 ```
 
 ## Build Everything

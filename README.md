@@ -1,8 +1,8 @@
-# sancheck
+# seccheck
 
-**Repository**: https://github.com/fozagtx/sancheck
+**Repository**: https://github.com/fozagtx/seccheck
 
-`sancheck` is a real URL security scanner, link gate, and Codex plugin package. It checks links before an agent workflow, build script, or developer tool opens them, with specific handling for prompt-injection text hidden in fetched pages.
+`seccheck` is a real URL security scanner, link gate, and Codex plugin package. It checks links before an agent workflow, build script, or developer tool opens them, with specific handling for prompt-injection text hidden in fetched pages.
 
 No mock verdicts are used. Network checks are live. Google Safe Browsing, VirusTotal, and PhishTank run only when real API credentials are present; otherwise their checks are reported as `skipped`.
 
@@ -38,19 +38,19 @@ Built using Codex with GPT-5.6:
 Scan one URL:
 
 ```sh
-PYTHONPATH=src python3 -m sancheck scan https://example.com --format text
+PYTHONPATH=src python3 -m seccheck scan https://example.com --format text
 ```
 
 Use the middleware contract:
 
 ```sh
-printf 'check https://example.com' | ./scripts/sancheck-gate
+printf 'check https://example.com' | ./scripts/seccheck-gate
 ```
 
 Gate links from a prompt or Markdown file:
 
 ```sh
-PYTHONPATH=src python3 -m sancheck gate --stdin --format json < message.md
+PYTHONPATH=src python3 -m seccheck gate --stdin --format json < message.md
 ```
 
 Exit codes:
@@ -64,15 +64,15 @@ Exit codes:
 The repo includes a bundled plugin at:
 
 ```text
-plugins/sancheck
+plugins/seccheck
 ```
 
 The plugin contains:
 
 - `.codex-plugin/plugin.json` - Plugin manifest
 - `skills/url-gate/SKILL.md` - URL gate skill for Codex
-- `scripts/sancheck-gate` - Gate script entry point
-- Bundled scanner source under `scripts/src/sancheck`
+- `scripts/seccheck-gate` - Gate script entry point
+- Bundled scanner source under `scripts/src/seccheck`
 
 ### Using the Plugin
 
@@ -80,13 +80,13 @@ The bundled gate works without installing the Python package:
 
 ```sh
 # Scan from stdin (text or JSON)
-printf '{"text":"open https://example.com"}' | plugins/sancheck/scripts/sancheck-gate
+printf '{"text":"open https://example.com"}' | plugins/seccheck/scripts/seccheck-gate
 
 # Scan a URL directly
-plugins/sancheck/scripts/sancheck-gate https://example.com
+plugins/seccheck/scripts/seccheck-gate https://example.com
 
 # Gate URLs from a file
-cat urls.txt | plugins/sancheck/scripts/sancheck-gate
+cat urls.txt | plugins/seccheck/scripts/seccheck-gate
 ```
 
 The plugin emits JSON and exits with:
@@ -98,7 +98,7 @@ The plugin emits JSON and exits with:
 
 When Codex encounters a task with external URLs, the `url-gate` skill automatically:
 1. Extracts URLs from the task context
-2. Sends them to `sancheck-gate` for validation
+2. Sends them to `seccheck-gate` for validation
 3. Blocks the operation if any URL is flagged as unsafe
 4. Returns the scan results to Codex
 

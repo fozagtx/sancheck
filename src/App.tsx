@@ -3,15 +3,15 @@ import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip
 const COMMANDS = [
   {
     title: "Middleware",
-    command: "printf 'check https://example.com' | ./scripts/sancheck-gate"
+    command: "printf 'check https://example.com' | ./scripts/seccheck-gate"
   },
   {
     title: "Direct scan",
-    command: "PYTHONPATH=src python3 -m sancheck scan https://example.com --format json"
+    command: "PYTHONPATH=src python3 -m seccheck scan https://example.com --format json"
   },
   {
     title: "Text gate",
-    command: "PYTHONPATH=src python3 -m sancheck gate --stdin --format json < message.md"
+    command: "PYTHONPATH=src python3 -m seccheck gate --stdin --format json < message.md"
   }
 ];
 
@@ -52,19 +52,19 @@ function App() {
     <main className="landing-shell">
       <section className="landing-frame">
         <header className="topbar">
-          <img className="brand-logo" src="/logo.png" alt="sancheck logo" />
+          <img className="brand-logo" src="/logo.png" alt="seccheck logo" />
         </header>
 
         <section className="hero-section">
           <div>
-            <p className="eyebrow">sancheck</p>
+            <p className="eyebrow">seccheck</p>
             <h1>URL safety middleware for agent workflows.</h1>
             <div className="hero-actions">
               <Button className="pill-button" variant="primary" onPress={() => copyText(COMMANDS[0].command)}>
                 Copy gate command
               </Button>
               <a
-                href="https://github.com/fozagtx/sancheck"
+                href="https://github.com/fozagtx/seccheck"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="pill-button get-started-link"
@@ -142,7 +142,7 @@ function App() {
             </CardHeader>
             <CardContent>
               <pre>{`{
-  "tool": "sancheck",
+  "tool": "seccheck",
   "mode": "middleware",
   "decision": "allow",
   "allowed": true,
@@ -154,7 +154,7 @@ function App() {
 
         <footer className="landing-footer">
           <p>
-            <a href="https://github.com/fozagtx/sancheck" target="_blank" rel="noopener noreferrer">
+            <a href="https://github.com/fozagtx/seccheck" target="_blank" rel="noopener noreferrer">
               GitHub
             </a>
           </p>

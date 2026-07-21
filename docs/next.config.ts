@@ -6,7 +6,7 @@ const withMDX = createMDX();
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: 'export',
-  basePath: '/sancheck',
+  basePath: '/seccheck',
   images: {
     unoptimized: true,
   },

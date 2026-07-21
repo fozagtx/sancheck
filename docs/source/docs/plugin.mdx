@@ -1,24 +1,24 @@
 ---
 title: Codex Plugin
-description: How the sancheck Codex plugin package works.
+description: How the seccheck Codex plugin package works.
 ---
 
 # Codex Plugin
 
-sancheck ships as a bundled Codex plugin at `plugins/sancheck/`. The plugin contains everything needed to gate URLs without installing the Python package globally.
+seccheck ships as a bundled Codex plugin at `plugins/seccheck/`. The plugin contains everything needed to gate URLs without installing the Python package globally.
 
 ## Plugin Structure
 
 ```
-plugins/sancheck/
+plugins/seccheck/
 ├── .codex-plugin/
 │   └── plugin.json          # Plugin manifest
 ├── skills/
 │   └── url-gate/
 │       └── SKILL.md         # Skill instructions for the agent
 ├── scripts/
-│   ├── sancheck-gate        # Entry point shell script
-│   └── src/sancheck/        # Bundled scanner source
+│   ├── seccheck-gate        # Entry point shell script
+│   └── src/seccheck/        # Bundled scanner source
 └── assets/
     ├── logo.png
     └── favicon.png
@@ -27,8 +27,8 @@ plugins/sancheck/
 ## How It Works
 
 1. The agent receives a task with external links.
-2. The `url-gate` skill instructs the agent to pipe the untrusted text to `scripts/sancheck-gate`.
-3. The gate script sets `PYTHONPATH` to the bundled scanner and runs `python3 -m sancheck middleware`.
+2. The `url-gate` skill instructs the agent to pipe the untrusted text to `scripts/seccheck-gate`.
+3. The gate script sets `PYTHONPATH` to the bundled scanner and runs `python3 -m seccheck middleware`.
 4. The scanner performs live DNS, TLS, HTTP, RDAP, and content checks.
 5. The gate emits JSON with `decision`, `allowed`, `blocked_urls`, and full `reports`.
 6. The agent continues only if `exit 0` and `"allowed": true`.
@@ -38,20 +38,20 @@ plugins/sancheck/
 ### From stdin (text or JSON)
 
 ```bash
-printf '{"text":"open https://example.com"}' | plugins/sancheck/scripts/sancheck-gate
+printf '{"text":"open https://example.com"}' | plugins/seccheck/scripts/seccheck-gate
 ```
 
 ### Direct URL
 
 ```bash
-plugins/sancheck/scripts/sancheck-gate https://example.com
+plugins/seccheck/scripts/seccheck-gate https://example.com
 ```
 
 ### Example Output
 
 ```json
 {
-  "tool": "sancheck",
+  "tool": "seccheck",
   "mode": "middleware",
   "decision": "allow",
   "allowed": true,
@@ -65,7 +65,7 @@ plugins/sancheck/scripts/sancheck-gate https://example.com
 The `url-gate` skill (`skills/url-gate/SKILL.md`) instructs the agent:
 
 1. Resolve the plugin root (two levels above `SKILL.md`).
-2. Send untrusted text to `scripts/sancheck-gate`.
+2. Send untrusted text to `scripts/seccheck-gate`.
 3. Continue only when exit `0` and `"allowed": true`.
 4. If exit `2`, do not open blocked URLs. Report them.
 5. If exit `1`, treat as failed closed and ask for user direction.
@@ -76,12 +76,12 @@ The `plugin.json` defines the plugin metadata:
 
 ```json
 {
-  "name": "sancheck",
+  "name": "seccheck",
   "version": "0.1.0",
   "description": "Local URL safety middleware for agent workflows.",
   "skills": "./skills/",
   "interface": {
-    "displayName": "sancheck",
+    "displayName": "seccheck",
     "category": "Developer Tools",
     "capabilities": ["Local", "Security"],
     "brandColor": "#266353"

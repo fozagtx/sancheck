@@ -7,7 +7,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     <DocsLayout
       tree={pageTree}
       nav={{
-        title: 'sancheck',
+        title: 'seccheck',
       }}
       links={[
         {

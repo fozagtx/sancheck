@@ -19,6 +19,8 @@ Built using Codex with GPT-5.6:
 - Threat intel provider integrations
 - CLI interface and middleware contract
 
+📖 **[How Codex & GPT-5.6 Were Used](CODEX_USAGE.md)** - Detailed breakdown of Codex usage, development workflow, and key decisions
+
 📦 **[Installation & Setup Guide](INSTALL.md)** - Full installation instructions, supported platforms, and testing guide
 
 ## What It Checks

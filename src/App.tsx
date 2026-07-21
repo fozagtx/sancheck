@@ -52,39 +52,24 @@ function App() {
     <main className="landing-shell">
       <section className="landing-frame">
         <header className="topbar">
-          <img className="brand-logo" src="/logo.png" alt="seccheck logo" />
-          <div className="topbar-actions">
-            <Chip color="default" variant="soft">local gate</Chip>
-            <a
-              href="http://localhost:3333/docs"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="pill-button docs-link"
-            >
-              Docs
-            </a>
-          </div>
+          <img className="brand-logo" src="/logo.png" alt="sancheck logo" />
         </header>
 
         <section className="hero-section">
           <div>
             <p className="eyebrow">sancheck</p>
             <h1>URL safety middleware for agent workflows.</h1>
-            <p className="hero-copy">
-              Scan links before a build tool, script, or plugin opens them. seccheck reads stdin,
-              validates discovered URLs, and returns a machine-readable allow or block decision.
-            </p>
             <div className="hero-actions">
               <Button className="pill-button" variant="primary" onPress={() => copyText(COMMANDS[0].command)}>
                 Copy gate command
               </Button>
               <a
-                href="http://localhost:3333/docs/getting-started"
+                href="https://github.com/fozagtx/sancheck"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="pill-button get-started-link"
               >
-                Get Started
+                View on GitHub
               </a>
             </div>
           </div>
@@ -169,11 +154,7 @@ function App() {
 
         <footer className="landing-footer">
           <p>
-            <a href="http://localhost:3333/docs" target="_blank" rel="noopener noreferrer">
-              Documentation
-            </a>
-            {" · "}
-            <a href="https://github.com/your-org/seccheck" target="_blank" rel="noopener noreferrer">
+            <a href="https://github.com/fozagtx/sancheck" target="_blank" rel="noopener noreferrer">
               GitHub
             </a>
           </p>

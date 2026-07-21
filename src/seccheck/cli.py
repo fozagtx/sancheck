@@ -55,6 +55,57 @@ def _scan_many(urls: Iterable[str], options: ScanOptions) -> List[ScanReport]:
     return reports
 
 
+def _dedupe_urls(urls: Iterable[str]) -> List[str]:
+    deduped = []
+    seen = set()
+    for url in urls:
+        if url not in seen:
+            seen.add(url)
+            deduped.append(url)
+    return deduped
+
+
+def _reports_payload(reports: List[ScanReport], allow_verdict: str, mode: str) -> Dict[str, Any]:
+    blocked = [report for report in reports if not _allowed_by_policy(report, allow_verdict) or not report.allowed_for_agent]
+    return {
+        "tool": "sancheck",
+        "mode": mode,
+        "allowed": len(blocked) == 0,
+        "decision": "allow" if len(blocked) == 0 else "block",
+        "policy": {"allow_verdict": allow_verdict, "agent_strict": True},
+        "url_count": len(reports),
+        "blocked_urls": [report.original_url for report in blocked],
+        "reports": [report.to_dict() for report in reports],
+    }
+
+
+def _urls_from_json_payload(payload: Any) -> List[str]:
+    urls: List[str] = []
+    if isinstance(payload, str):
+        urls.extend(extract_urls(payload))
+    elif isinstance(payload, list):
+        for item in payload:
+            urls.extend(_urls_from_json_payload(item))
+    elif isinstance(payload, dict):
+        for key in ("url", "href"):
+            value = payload.get(key)
+            if isinstance(value, str):
+                urls.append(value)
+        for key in ("urls", "links"):
+            value = payload.get(key)
+            if isinstance(value, list):
+                urls.extend(str(item) for item in value if isinstance(item, str))
+        for key in ("text", "content", "prompt", "input", "body"):
+            value = payload.get(key)
+            if isinstance(value, str):
+                urls.extend(extract_urls(value))
+        messages = payload.get("messages")
+        if isinstance(messages, list):
+            for message in messages:
+                urls.extend(_urls_from_json_payload(message))
+    return urls
+
+
 def command_scan(args: argparse.Namespace) -> int:
     options = _options_from_args(args)
     reports = _scan_many(args.urls, options)
@@ -75,23 +126,11 @@ def command_gate(args: argparse.Namespace) -> int:
     if args.stdin:
         text = sys.stdin.read()
         urls.extend(extract_urls(text))
-    deduped = []
-    seen = set()
-    for url in urls:
-        if url not in seen:
-            seen.add(url)
-            deduped.append(url)
+    deduped = _dedupe_urls(urls)
 
     options = _options_from_args(args)
     reports = _scan_many(deduped, options)
-    blocked = [report for report in reports if not _allowed_by_policy(report, args.allow_verdict) or not report.allowed_for_agent]
-    payload = {
-        "allowed": len(blocked) == 0,
-        "policy": {"allow_verdict": args.allow_verdict, "agent_strict": True},
-        "url_count": len(deduped),
-        "blocked_urls": [report.original_url for report in blocked],
-        "reports": [report.to_dict() for report in reports],
-    }
+    payload = _reports_payload(reports, args.allow_verdict, "gate")
     if args.format == "json":
         _print_json(payload)
     else:
@@ -100,9 +139,33 @@ def command_gate(args: argparse.Namespace) -> int:
         elif payload["allowed"]:
             print("Allowed: all %d URL(s) passed." % len(deduped))
         else:
+            blocked = [report for report in reports if not _allowed_by_policy(report, args.allow_verdict) or not report.allowed_for_agent]
             print("Blocked: %d of %d URL(s) failed policy." % (len(blocked), len(deduped)))
             for report in blocked:
                 print("- %s -> %s (%s risk)" % (report.original_url, report.verdict, report.risk_score))
+    return 0 if payload["allowed"] else 2
+
+
+def command_middleware(args: argparse.Namespace) -> int:
+    stdin_text = sys.stdin.read() if not sys.stdin.isatty() else ""
+    urls = list(args.urls or [])
+    if stdin_text:
+        try:
+            payload = json.loads(stdin_text)
+        except json.JSONDecodeError:
+            urls.extend(extract_urls(stdin_text))
+        else:
+            urls.extend(_urls_from_json_payload(payload))
+
+    deduped = _dedupe_urls(urls)
+    options = _options_from_args(args)
+    reports = _scan_many(deduped, options)
+    payload = _reports_payload(reports, args.allow_verdict, "middleware")
+    payload["middleware"] = {
+        "contract": "stdin text or JSON in, JSON decision out, exit 2 on block",
+        "safe_to_continue": payload["allowed"],
+    }
+    _print_json(payload)
     return 0 if payload["allowed"] else 2
 
 
@@ -144,6 +207,12 @@ def build_parser() -> argparse.ArgumentParser:
     add_common_options(gate_parser)
     gate_parser.set_defaults(func=command_gate)
 
+    middleware_parser = subparsers.add_parser("middleware", help="agent middleware: read stdin or URLs and emit a JSON allow/block decision")
+    middleware_parser.add_argument("urls", nargs="*")
+    middleware_parser.add_argument("--allow-verdict", choices=("safe", "caution", "unsafe"), default="safe", help="maximum verdict allowed by policy")
+    add_common_options(middleware_parser)
+    middleware_parser.set_defaults(func=command_middleware)
+
     extract_parser = subparsers.add_parser("extract", help="extract URLs from a file or stdin")
     extract_parser.add_argument("file", help="file to scan, or '-' for stdin")
     extract_parser.set_defaults(func=command_extract)
@@ -158,5 +227,5 @@ def main(argv: List[str] = None) -> int:
     except KeyboardInterrupt:
         return 130
     except Exception as exc:
-        print("seccheck: %s: %s" % (exc.__class__.__name__, exc), file=sys.stderr)
+        print("sancheck: %s: %s" % (exc.__class__.__name__, exc), file=sys.stderr)
         return 1

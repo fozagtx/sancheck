@@ -1,0 +1,30 @@
+[
+  {
+    "name": "index",
+    "title": "Overview"
+  },
+  {
+    "name": "getting-started",
+    "title": "Getting Started"
+  },
+  {
+    "name": "plugin",
+    "title": "Codex Plugin"
+  },
+  {
+    "name": "url-gate",
+    "title": "URL Gate"
+  },
+  {
+    "name": "middleware",
+    "title": "Middleware Contract"
+  },
+  {
+    "name": "configuration",
+    "title": "Configuration"
+  },
+  {
+    "name": "api",
+    "title": "API Reference"
+  }
+]

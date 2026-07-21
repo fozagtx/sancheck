@@ -1,0 +1,116 @@
+---
+title: URL Gate
+description: How URLs are extracted, validated, and gated.
+---
+
+# URL Gate
+
+The URL gate is the core of sancheck. It extracts URLs from any text, validates them against multiple security checks, and returns a machine-readable allow or block decision.
+
+## URL Extraction
+
+sancheck extracts URLs using a regex that matches `http://` and `https://` schemes, as well as `www.` prefixes. Trailing punctuation is stripped.
+
+```python
+# Example: extract URLs from text
+from sancheck.url_utils import extract_urls
+
+urls = extract_urls("Check https://example.com and http://test.org")
+# ["https://example.com", "http://test.org"]
+```
+
+## Validation Pipeline
+
+Each extracted URL goes through a multi-stage validation pipeline:
+
+### 1. URL Structure Checks
+
+- **Scheme**: Only `http` and `https` are supported.
+- **Userinfo**: URLs with `@` syntax that can hide the real host are flagged.
+- **Punycode**: Hostnames with `xn--` prefixes are flagged for inspection.
+- **IP literals**: IPv4 literals instead of domains are flagged.
+- **Uncommon ports**: Ports other than 80/443 are flagged.
+- **Link shorteners**: Known shorteners (bit.ly, t.co, etc.) are flagged.
+- **Suspicious TLDs**: TLDs commonly abused in phishing are flagged.
+- **Lure words**: Credential/payment keywords in host or path are flagged.
+- **Length**: Unusually long hostnames or paths are flagged.
+- **Entropy**: High-entropy hostnames may be generated/DGA domains.
+- **Null bytes**: Null-byte encoding is flagged as critical.
+
+### 2. DNS Resolution
+
+- Resolves the hostname to IP addresses.
+- Blocks private, loopback, link-local, multicast, reserved, and unspecified IPs (SSRF protection).
+- DNS resolution failure is flagged as high severity.
+
+### 3. TLS Validation (HTTPS only)
+
+- Validates the certificate chain.
+- Checks certificate expiration.
+- Reports cipher and TLS version.
+- Expired certificates are flagged as critical.
+- Certificates expiring within 14 days are flagged as medium.
+
+### 4. Domain Age (RDAP)
+
+- Looks up the domain registration date via RDAP.
+- Domains registered less than 30 days ago are flagged as high severity.
+- Domains registered less than 90 days ago are flagged as medium.
+
+### 5. HTTP Behavior
+
+- Follows redirects (up to `max_redirects`).
+- Checks status codes (4xx and 5xx are flagged).
+- Inspects content type and headers.
+- Redirect chains longer than 2 are flagged.
+
+### 6. Prompt Injection Detection
+
+- Scans fetched page content for hostile AI instructions.
+- Detects instruction overrides, role reassignment, secret exfiltration, tool abuse, data smuggling, jailbreak markers, and prompt boundary markers.
+- Scans hidden HTML content (comments, `display:none`, `aria-hidden`).
+- Prompt injection matches are weighted and scored.
+
+### 7. Threat Intelligence (Optional)
+
+- **Google Safe Browsing**: Reports malicious or socially engineered URLs.
+- **VirusTotal**: Reports malicious or suspicious detections.
+- **PhishTank**: Reports verified phishing URLs.
+- Providers run only when API keys are set. Missing keys are reported as `skipped`.
+
+## Verdict and Scoring
+
+Each finding has a severity and a risk weight:
+
+| Severity | Weight |
+|----------|--------|
+| `info` | 0 |
+| `low` | 5 |
+| `medium` | 15 |
+| `high` | 30 |
+| `critical` | 45 |
+
+The **risk score** is the sum of all finding weights, capped at 100.
+
+The **verdict** is determined by the risk score and severity:
+
+| Verdict | Condition |
+|---------|-----------|
+| `safe` | Risk score < 25 and no high/critical findings |
+| `caution` | Risk score 25-59 or high findings |
+| `unsafe` | Risk score ≥ 60 or critical findings |
+
+The **safety score** is `10 - (risk_score / 10)`, capped between 1 and 10.
+
+## Agent Allow Policy
+
+A URL is allowed for agent use only if:
+
+1. The verdict is `safe`.
+2. No high/critical findings in `prompt_injection`, `dns`, `tls`, or `threat_intel` checks.
+
+## Next Steps
+
+- [Middleware Contract](/docs/middleware) — understand the stdin-to-JSON contract
+- [Configuration](/docs/configuration) — customize scanner options
+- [API Reference](/docs/api/cli) — full CLI command reference

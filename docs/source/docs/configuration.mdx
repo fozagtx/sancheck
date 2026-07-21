@@ -1,0 +1,93 @@
+---
+title: Configuration
+description: Customize scanner options and provider keys.
+---
+
+# Configuration
+
+sancheck provides a range of options to customize the scanner behavior. All options can be set via CLI flags or environment variables.
+
+## CLI Options
+
+### Network Options
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--timeout` | `5.0` | Network timeout in seconds |
+| `--max-redirects` | `5` | Maximum redirects to follow |
+| `--max-bytes` | `65536` | Maximum response bytes to inspect |
+
+### Security Options
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--allow-private` | `false` | Allow fetching private, loopback, or reserved IP targets |
+| `--no-verify-tls` | `false` | Disable TLS certificate verification |
+| `--no-threat-intel` | `false` | Skip external threat-intel providers |
+| `--no-domain-age` | `false` | Skip RDAP domain age lookup |
+
+### Output Options
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--format` | `text` | Output format: `json` or `text` |
+
+## Provider Keys
+
+sancheck supports optional live provider lookups. Set these environment variables to enable the corresponding provider:
+
+### Google Safe Browsing
+
+```bash
+export GOOGLE_SAFE_BROWSING_API_KEY="your-api-key"
+```
+
+Reports URLs flagged as malicious, socially engineered, or unwanted software.
+
+### VirusTotal
+
+```bash
+export VIRUSTOTAL_API_KEY="your-api-key"
+```
+
+Reports URLs with malicious or suspicious detections.
+
+### PhishTank
+
+```bash
+export PHISHTANK_APP_KEY="your-app-key"
+```
+
+Reports verified phishing URLs.
+
+## Provider Behavior
+
+- Providers run only when their API key is set.
+- Missing keys are reported as `skipped` in the output, not as clean results.
+- Provider failures are reported as `error` with the error message.
+- Provider failures do not block the scan; they are visible in the report.
+
+## Example: Custom Configuration
+
+```bash
+PYTHONPATH=src python3 -m sancheck scan https://example.com \
+  --timeout 10.0 \
+  --max-redirects 3 \
+  --max-bytes 32768 \
+  --no-domain-age \
+  --format json
+```
+
+## Example: With Provider Keys
+
+```bash
+export GOOGLE_SAFE_BROWSING_API_KEY="..."
+export VIRUSTOTAL_API_KEY="..."
+
+PYTHONPATH=src python3 -m sancheck scan https://example.com --format json
+```
+
+## Next Steps
+
+- [API Reference](/docs/api/cli) — full CLI command reference
+- [Middleware Contract](/docs/middleware) — understand the stdin-to-JSON contract

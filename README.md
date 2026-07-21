@@ -1,71 +1,81 @@
-# seccheck
+# sancheck
 
-`seccheck` is a real URL security scanner and link gate. It checks links before an agent or developer opens them, with special attention to prompt-injection text hidden in fetched pages.
+`sancheck` is a real URL security scanner, link gate, and Codex plugin package. It checks links before an agent workflow, build script, or developer tool opens them, with specific handling for prompt-injection text hidden in fetched pages.
 
-No mock verdicts are used. Network checks are live. Google Safe Browsing, VirusTotal, and PhishTank are called only when you provide real API credentials; otherwise their checks are reported as `skipped`.
+No mock verdicts are used. Network checks are live. Google Safe Browsing, VirusTotal, and PhishTank run only when real API credentials are present; otherwise their checks are reported as `skipped`.
+
+## Built with Codex
+
+**Codex Session ID**: `019f8658-5272-7480-ae44-3a4ebd620ba2`
+
+Built using Codex with GPT-5.6:
+- URL validation and normalization logic
+- DNS resolution and SSRF protection
+- TLS certificate validation
+- HTTP behavior analysis
+- Prompt injection detection patterns
+- Threat intel provider integrations
+- CLI interface and middleware contract
 
 ## What It Checks
 
-- URL structure: userinfo tricks, IP literals, uncommon ports, suspicious keywords, long/encoded paths.
-- DNS and SSRF safety: resolves hosts and blocks loopback, private, link-local, multicast, reserved, and unspecified IPs by default.
-- HTTPS/TLS: validates the certificate chain and expiration for HTTPS URLs.
-- HTTP health: follows redirects safely, checks status codes, content type, headers, and redirect targets.
-- Prompt injection: fetches a bounded, non-executed content sample and flags hostile instructions such as attempts to override system/developer instructions, leak secrets, run tools, or hide instructions in comments/styles.
-- Reputation: checks shorteners, risky-looking hostnames, new domains via RDAP when available, and optional external threat-intel providers.
+- URL structure: userinfo tricks, IP literals, uncommon ports, suspicious keywords, long or encoded paths.
+- DNS and SSRF safety: loopback, private, link-local, multicast, reserved, and unspecified IPs are blocked by default.
+- HTTPS/TLS: certificate chain and expiration are checked for HTTPS URLs.
+- HTTP behavior: redirects, status codes, content type, headers, and final targets are inspected.
+- Prompt injection: bounded page text and HTML samples are scanned without executing page scripts.
+- Reputation: shorteners, risky-looking hosts, new domains via RDAP, and optional live providers.
 
 ## Quick Start
 
-Run directly from the repo:
+Scan one URL:
 
 ```sh
-PYTHONPATH=src python3 -m seccheck scan https://example.com --format text
+PYTHONPATH=src python3 -m sancheck scan https://example.com --format text
 ```
 
-Run the Mouve ProMax UI:
+Use the middleware contract:
 
 ```sh
-npm install
-npm run app
-```
-
-Open:
-
-```text
-http://127.0.0.1:5173/
-```
-
-Run the built UI and API together:
-
-```sh
-npm run build
-npm run preview
-```
-
-Open:
-
-```text
-http://127.0.0.1:8765/
+printf 'check https://example.com' | ./scripts/sancheck-gate
 ```
 
 Gate links from a prompt or Markdown file:
 
 ```sh
-PYTHONPATH=src python3 -m seccheck gate --stdin < message.md
-```
-
-Use the helper script:
-
-```sh
-./scripts/seccheck-gate --stdin < message.md
+PYTHONPATH=src python3 -m sancheck gate --stdin --format json < message.md
 ```
 
 Exit codes:
 
 - `0`: all scanned links are allowed.
-- `2`: at least one link is blocked by the selected gate policy.
+- `2`: at least one link is blocked by policy.
 - `1`: scanner usage or runtime failure.
 
-## Optional Real Threat-Intel Keys
+## Codex Plugin Package
+
+The repo includes a bundled plugin at:
+
+```text
+plugins/seccheck
+```
+
+The plugin contains:
+
+- `.codex-plugin/plugin.json`
+- `skills/url-gate/SKILL.md`
+- `scripts/seccheck-gate`
+- bundled scanner source under `scripts/src/seccheck`
+
+The bundled gate works without installing the Python package:
+
+```sh
+printf '{"text":"open https://example.com"}' | plugins/secchec./scripts/sancheck-gate
+```
+
+The plugin emits JSON and exits with `2` when policy blocks a URL.
+
+## Optional Provider Keys
 
 Set any of these environment variables to enable the corresponding live provider:
 
@@ -75,49 +85,28 @@ export VIRUSTOTAL_API_KEY="..."
 export PHISHTANK_APP_KEY="..."
 ```
 
-Then run:
+Provider failures and missing keys stay visible in the report. They are not converted into clean results.
+
+## Landing Page
+
+The web project is a static landing page for the tool, not the scanner runtime:
 
 ```sh
-PYTHONPATH=src python3 -m seccheck scan https://example.com --format json
+npm install
+npm run dev
 ```
 
-Provider failures are included in the report. They are not converted into clean results.
-
-## Agent Gate Use
-
-`gate` is designed to sit in front of agent browsing or URL ingestion:
+Build and preview:
 
 ```sh
-./scripts/seccheck-gate --stdin --format json < incoming_prompt.md
+npm run build
+npm run preview
 ```
-
-The JSON output includes:
-
-- `allowed`: whether every discovered URL passed.
-- `blocked_urls`: URLs that failed policy.
-- `reports`: full scan reports for auditability.
-
-By default, the harness allows only `safe` verdicts. You can relax this for human-supervised workflows:
-
-```sh
-./scripts/seccheck-gate --stdin --allow-verdict caution
-```
-
-## Local UI API
-
-The UI calls `POST /api/scan` on the local Node server. The server executes:
-
-```sh
-python3 -m seccheck scan <url> --format json
-```
-
-It passes arguments with `spawn`, not through a shell string, and treats scanner exit code `2` as a valid unsafe/caution report rather than a server crash.
 
 ## Tests
 
 ```sh
-PYTHONPATH=src python3 -m unittest discover -s tests
-npm run build
+npm run check
 ```
 
-The tests use a real local HTTP server and deterministic local content. They do not mock scanner verdicts or external threat-intel responses.
+The tests use a real local HTTP server and deterministic local content. They do not mock scanner verdicts or external provider responses.

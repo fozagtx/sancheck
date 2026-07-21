@@ -1,0 +1,26 @@
+{
+  "name": "sancheck",
+  "version": "0.1.0",
+  "description": "Local URL safety middleware for agent workflows.",
+  "author": {
+    "name": "sancheck maintainers"
+  },
+  "license": "MIT",
+  "keywords": ["security", "url-scanner", "middleware", "prompt-injection"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "seccheck",
+    "shortDescription": "Gate URLs before tools open them.",
+    "longDescription": "seccheck adds a local URL safety gate that reads stdin text or JSON, scans discovered links, and returns a JSON allow or block decision.",
+    "developerName": "seccheck maintainers",
+    "category": "Developer Tools",
+    "capabilities": ["Local", "Security"],
+    "defaultPrompt": [
+      "Check these links with seccheck.",
+      "Gate URLs before opening them."
+    ],
+    "brandColor": "#266353",
+    "composerIcon": "./assets/favicon.png",
+    "logo": "./assets/logo.png"
+  }
+}

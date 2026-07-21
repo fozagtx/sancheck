@@ -1,0 +1,150 @@
+---
+title: Middleware Contract
+description: The stdin-to-JSON contract for agent workflows.
+---
+
+# Middleware Contract
+
+sancheck acts as middleware between an agent and untrusted URLs. The contract is simple: text or JSON in, JSON decision out.
+
+## Contract Overview
+
+```
+stdin (text or JSON) → sancheck → stdout (JSON decision) + exit code
+```
+
+| Exit Code | Meaning |
+|-----------|---------|
+| `0` | All scanned links are allowed |
+| `2` | At least one link is blocked by policy |
+| `1` | Scanner usage or runtime failure |
+
+## Input Formats
+
+### Plain Text
+
+sancheck extracts URLs from any text:
+
+```bash
+printf 'Check out https://example.com and http://test.org' | ./scripts/sancheck-gate
+```
+
+### JSON with Text Field
+
+```bash
+printf '{"text":"open https://example.com"}' | ./scripts/sancheck-gate
+```
+
+### JSON with URL Array
+
+```bash
+printf '{"urls":["https://example.com","http://test.org"]}' | ./scripts/sancheck-gate
+```
+
+### Direct URL Arguments
+
+```bash
+./scripts/sancheck-gate https://example.com http://test.org
+```
+
+## Output Format
+
+The gate emits a JSON payload with the following structure:
+
+```json
+{
+  "tool": "sancheck",
+  "mode": "middleware",
+  "decision": "allow",
+  "allowed": true,
+  "policy": {
+    "allow_verdict": "safe",
+    "agent_strict": true
+  },
+  "url_count": 1,
+  "blocked_urls": [],
+  "reports": [
+    {
+      "original_url": "https://example.com",
+      "normalized_url": "https://example.com/",
+      "final_url": "https://example.com/",
+      "checked_at": "2024-01-01T00:00:00Z",
+      "verdict": "safe",
+      "safety_score": 9,
+      "risk_score": 5,
+      "allowed_for_agent": true,
+      "findings": [],
+      "redirects": [],
+      "checks": {...},
+      "provider_results": [...]
+    }
+  ],
+  "middleware": {
+    "contract": "stdin text or JSON in, JSON decision out, exit 2 on block",
+    "safe_to_continue": true
+  }
+}
+```
+
+## Decision Logic
+
+The `decision` field is determined by:
+
+1. Extract all URLs from the input.
+2. Scan each URL through the validation pipeline.
+3. Apply the allow policy (default: verdict must be `safe`).
+4. If any URL is blocked, `decision` is `block` and `allowed` is `false`.
+5. If all URLs pass, `decision` is `allow` and `allowed` is `true`.
+
+## Agent Integration
+
+### Codex Plugin
+
+The `url-gate` skill instructs the agent:
+
+```bash
+printf '%s\n' "$UNTRUSTED_TEXT" | "$PLUGIN_ROOT/scripts/sancheck-gate"
+```
+
+The agent continues only if exit `0` and `"allowed": true`.
+
+### CI/CD Pipeline
+
+```yaml
+- name: Gate URLs
+  run: |
+    printf '%s' "$URLS" | ./scripts/sancheck-gate
+    if [ $? -eq 2 ]; then
+      echo "URLs blocked"
+      exit 1
+    fi
+```
+
+### Build Script
+
+```bash
+#!/bin/bash
+URLS=$(grep -oE 'https?://[^ ]+' README.md)
+printf '%s\n' $URLS | ./scripts/sancheck-gate > /tmp/sancheck.json
+if [ $(jq -r '.allowed' /tmp/sancheck.json) != "true" ]; then
+  echo "Blocked URLs found"
+  exit 1
+fi
+```
+
+## Policy Options
+
+The `--allow-verdict` flag controls the maximum verdict allowed by policy:
+
+```bash
+# Allow safe and caution verdicts
+./scripts/sancheck-gate --allow-verdict caution https://example.com
+
+# Allow only safe verdicts (default)
+./scripts/sancheck-gate --allow-verdict safe https://example.com
+```
+
+## Next Steps
+
+- [Configuration](/docs/configuration) — customize scanner options
+- [API Reference](/docs/api/cli) — full CLI command reference

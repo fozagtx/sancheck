@@ -1,0 +1,36 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/preset.css';
+
+:root {
+  --color-background: #fafaf9;
+  --color-foreground: #1a1a1a;
+  --color-primary: #266353;
+  --color-primary-foreground: #ffffff;
+  --color-muted: #f4f4f5;
+  --color-border: #e4e4e7;
+  --color-card: #ffffff;
+  --color-popover: #ffffff;
+  --color-secondary: #f4f4f5;
+  --color-accent: #ecfdf5;
+  --color-ring: #266353;
+  --fd-radius: 0.5rem;
+}
+
+.dark {
+  --color-background: #0a0a0a;
+  --color-foreground: #fafafa;
+  --color-primary: #34d399;
+  --color-primary-foreground: #0a0a0a;
+  --color-muted: #27272a;
+  --color-border: #27272a;
+  --color-card: #0f0f0f;
+  --color-popover: #0f0f0f;
+  --color-secondary: #27272a;
+  --color-accent: #064e3b;
+  --color-ring: #34d399;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}

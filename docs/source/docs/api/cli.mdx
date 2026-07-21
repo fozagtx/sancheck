@@ -1,0 +1,132 @@
+---
+title: CLI Reference
+description: Full command reference for the sancheck CLI.
+---
+
+# CLI Reference
+
+sancheck provides four commands: `scan`, `gate`, `middleware`, and `extract`.
+
+## scan
+
+Scan one or more URLs and print the results.
+
+```bash
+PYTHONPATH=src python3 -m sancheck scan <url> [url...] [options]
+```
+
+### Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `urls` | One or more URLs to scan (required) |
+
+### Options
+
+All [common options](#common-options) are supported.
+
+### Example
+
+```bash
+PYTHONPATH=src python3 -m sancheck scan https://example.com --format json
+```
+
+## gate
+
+Gate URLs from args or stdin for agent-safe use.
+
+```bash
+PYTHONPATH=src python3 -m sancheck gate [url...] [options]
+```
+
+### Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `urls` | Zero or more URLs to gate |
+
+### Options
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--stdin` | `false` | Read text from stdin and extract URLs |
+| `--allow-verdict` | `safe` | Maximum verdict allowed by policy (`safe`, `caution`, `unsafe`) |
+
+All [common options](#common-options) are supported.
+
+### Example
+
+```bash
+PYTHONPATH=src python3 -m sancheck gate --stdin --format json < message.md
+```
+
+## middleware
+
+Agent middleware: read stdin or URLs and emit a JSON allow/block decision.
+
+```bash
+PYTHONPATH=src python3 -m sancheck middleware [url...] [options]
+```
+
+### Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `urls` | Zero or more URLs to gate |
+
+### Options
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--allow-verdict` | `safe` | Maximum verdict allowed by policy |
+
+All [common options](#common-options) are supported.
+
+### Example
+
+```bash
+printf 'check https://example.com' | ./scripts/sancheck-gate
+```
+
+## extract
+
+Extract URLs from a file or stdin.
+
+```bash
+PYTHONPATH=src python3 -m sancheck extract <file>
+```
+
+### Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `file` | File to scan, or `-` for stdin |
+
+### Example
+
+```bash
+PYTHONPATH=src python3 -m sancheck extract README.md
+```
+
+## Common Options
+
+These options are available on all commands:
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--timeout` | `5.0` | Network timeout in seconds |
+| `--max-redirects` | `5` | Maximum redirects to follow |
+| `--max-bytes` | `65536` | Maximum response bytes to inspect |
+| `--allow-private` | `false` | Allow private, loopback, or reserved IP targets |
+| `--no-verify-tls` | `false` | Disable TLS certificate verification |
+| `--no-threat-intel` | `false` | Skip external threat-intel providers |
+| `--no-domain-age` | `false` | Skip RDAP domain age lookup |
+| `--format` | `text` | Output format: `json` or `text` |
+
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | All scanned links are allowed |
+| `2` | At least one link is blocked by policy |
+| `1` | Scanner usage or runtime failure |

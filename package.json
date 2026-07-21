@@ -1,14 +1,12 @@
 {
-  "name": "seccheck",
+  "name": "sancheck",
   "private": true,
   "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "api": "node scripts/server.mjs --api-only",
-    "app": "node scripts/dev.mjs",
     "build": "tsc -b && vite build",
-    "preview": "node scripts/server.mjs",
+    "preview": "vite preview --host 127.0.0.1",
     "test:py": "PYTHONPATH=src python3 -m unittest discover -s tests",
     "check": "npm run build && PYTHONPATH=src python3 -m unittest discover -s tests && PYTHONPATH=src python3 -m compileall -q src tests"
   },

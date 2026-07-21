@@ -1,0 +1,130 @@
+---
+title: Scanner API
+description: Python API reference for the sancheck scanner.
+---
+
+# Scanner API
+
+sancheck provides a Python API for programmatic use.
+
+## scan_url
+
+Scan a single URL and return a `ScanReport`.
+
+```python
+from sancheck import scan_url, ScanOptions
+
+report = scan_url("https://example.com")
+print(report.verdict)  # "safe"
+print(report.safety_score)  # 9
+print(report.risk_score)  # 5
+print(report.allowed_for_agent)  # True
+```
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `raw_url` | `str` | (required) | URL to scan |
+| `options` | `ScanOptions` | `ScanOptions()` | Scanner options |
+
+### Returns
+
+`ScanReport` with the following fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `original_url` | `str` | Original URL input |
+| `normalized_url` | `str` | Normalized URL |
+| `final_url` | `str` | Final URL after redirects |
+| `checked_at` | `datetime` | When the scan was performed |
+| `verdict` | `str` | `safe`, `caution`, or `unsafe` |
+| `safety_score` | `int` | 1-10 safety score |
+| `risk_score` | `int` | 0-100 risk score |
+| `allowed_for_agent` | `bool` | Whether the URL is allowed for agent use |
+| `findings` | `List[Finding]` | List of findings |
+| `redirects` | `List[Dict]` | Redirect chain |
+| `checks` | `Dict` | Detailed check results |
+| `provider_results` | `List[ProviderResult]` | Threat intel provider results |
+
+## ScanOptions
+
+Configure the scanner behavior.
+
+```python
+from sancheck import ScanOptions
+
+options = ScanOptions(
+    timeout=10.0,
+    max_redirects=3,
+    max_bytes=32768,
+    allow_private=False,
+    verify_tls=True,
+    enable_threat_intel=True,
+    check_domain_age=True,
+)
+```
+
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `timeout` | `float` | `5.0` | Network timeout in seconds |
+| `max_redirects` | `int` | `5` | Maximum redirects to follow |
+| `max_bytes` | `int` | `65536` | Maximum response bytes to inspect |
+| `allow_private` | `bool` | `False` | Allow private IP targets |
+| `verify_tls` | `bool` | `True` | Verify TLS certificates |
+| `enable_threat_intel` | `bool` | `True` | Enable threat intel providers |
+| `check_domain_age` | `bool` | `True` | Check domain age via RDAP |
+| `user_agent` | `str` | `sancheck/0.1` | User agent string |
+
+## Finding
+
+A security finding from the scan.
+
+```python
+@dataclass
+class Finding:
+    check: str          # Check name (e.g., "dns", "tls", "prompt_injection")
+    severity: str       # "info", "low", "medium", "high", "critical"
+    message: str        # Human-readable message
+    weight: int         # Risk weight (optional)
+    evidence: Dict      # Evidence data (optional)
+```
+
+## ProviderResult
+
+Result from a threat intel provider.
+
+```python
+@dataclass
+class ProviderResult:
+    provider: str       # Provider name
+    status: str         # "clean", "match", "skipped", "error"
+    data: Dict          # Provider response data
+    finding: Finding    # Finding if match (optional)
+```
+
+## extract_urls
+
+Extract URLs from text.
+
+```python
+from sancheck.url_utils import extract_urls
+
+urls = extract_urls("Check https://example.com and http://test.org")
+# ["https://example.com", "http://test.org"]
+```
+
+## Example: Batch Scan
+
+```python
+from sancheck import scan_url, ScanOptions
+
+urls = ["https://example.com", "https://test.org"]
+options = ScanOptions(timeout=10.0)
+
+for url in urls:
+    report = scan_url(url, options)
+    print(f"{url}: {report.verdict} (safety: {report.safety_score}/10)")
+```

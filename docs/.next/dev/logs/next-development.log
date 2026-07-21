@@ -1,0 +1,7 @@
+{"timestamp":"00:00:00.525","source":"Server","level":"LOG","message":"[MDX] generated files in 1.0879580000000715ms"}
+{"timestamp":"00:00:00.527","source":"Server","level":"LOG","message":"[MDX] started dev server"}
+{"timestamp":"00:00:00.557","source":"Server","level":"LOG","message":"It looks like you're trying to use TypeScript but do not have the required package(s) installed.\nInstalling dependencies\n\nIf you are not trying to use TypeScript, please remove the tsconfig.json file from your package root (and any TypeScript files in your app and pages directories).\n"}
+{"timestamp":"00:00:00.744","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:00.744","source":"Server","level":"LOG","message":"Installing devDependencies (yarn):"}
+{"timestamp":"00:00:00.744","source":"Server","level":"LOG","message":"- typescript"}
+{"timestamp":"00:00:00.744","source":"Server","level":"LOG","message":""}

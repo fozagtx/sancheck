@@ -1,0 +1,14 @@
+[
+  {
+    "name": "cli",
+    "title": "CLI Reference"
+  },
+  {
+    "name": "scanner",
+    "title": "Scanner API"
+  },
+  {
+    "name": "skills",
+    "title": "Plugin Skills"
+  }
+]

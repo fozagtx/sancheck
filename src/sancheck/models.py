@@ -64,7 +64,7 @@ class ScanOptions:
     verify_tls: bool = True
     enable_threat_intel: bool = True
     check_domain_age: bool = True
-    user_agent: str = "seccheck/0.1 link-safety-harness"
+    user_agent: str = "sancheck/0.1 link-safety-harness"
 
 
 @dataclass

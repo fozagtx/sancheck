@@ -68,7 +68,7 @@ def _dedupe_urls(urls: Iterable[str]) -> List[str]:
 def _reports_payload(reports: List[ScanReport], allow_verdict: str, mode: str) -> Dict[str, Any]:
     blocked = [report for report in reports if not _allowed_by_policy(report, allow_verdict) or not report.allowed_for_agent]
     return {
-        "tool": "seccheck",
+        "tool": "sancheck",
         "mode": mode,
         "allowed": len(blocked) == 0,
         "decision": "allow" if len(blocked) == 0 else "block",
@@ -192,7 +192,7 @@ def add_common_options(parser: argparse.ArgumentParser) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="seccheck", description="Real URL scanner and link-safety gate.")
+    parser = argparse.ArgumentParser(prog="sancheck", description="Real URL scanner and link-safety gate.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     scan_parser = subparsers.add_parser("scan", help="scan one or more URLs")
@@ -227,5 +227,5 @@ def main(argv: List[str] = None) -> int:
     except KeyboardInterrupt:
         return 130
     except Exception as exc:
-        print("seccheck: %s: %s" % (exc.__class__.__name__, exc), file=sys.stderr)
+        print("sancheck: %s: %s" % (exc.__class__.__name__, exc), file=sys.stderr)
         return 1

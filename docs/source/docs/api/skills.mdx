@@ -1,19 +1,19 @@
 ---
 title: Plugin Skills
-description: Reference for the seccheck Codex plugin skills.
+description: Reference for the sancheck Codex plugin skills.
 ---
 
 # Plugin Skills
 
-seccheck includes a `url-gate` skill that instructs the Codex agent how to use the scanner.
+sancheck includes a `url-gate` skill that instructs the Codex agent how to use the scanner.
 
 ## url-gate Skill
 
-Location: `plugins/seccheck/skills/url-gate/SKILL.md`
+Location: `plugins/sancheck/skills/url-gate/SKILL.md`
 
 ### Purpose
 
-Gate URLs with the bundled seccheck scanner before an agent opens, fetches, summarizes, or acts on untrusted links.
+Gate URLs with the bundled sancheck scanner before an agent opens, fetches, summarizes, or acts on untrusted links.
 
 ### When to Use
 
@@ -29,7 +29,7 @@ Use this skill whenever a task includes external links or asks you to:
 ### Workflow
 
 1. **Resolve the plugin root**: The directory two levels above `SKILL.md`.
-2. **Send untrusted text**: Pipe the text, prompt, JSON payload, or URL list to `scripts/seccheck-gate`.
+2. **Send untrusted text**: Pipe the text, prompt, JSON payload, or URL list to `scripts/sancheck-gate`.
 3. **Check exit code**: Continue only when exit `0` and `"allowed": true`.
 4. **Handle blocks**: If exit `2`, do not open blocked URLs. Report them.
 5. **Handle failures**: If exit `1`, treat as failed closed and ask for user direction.
@@ -37,13 +37,13 @@ Use this skill whenever a task includes external links or asks you to:
 ### Command
 
 ```bash
-printf '%s\n' "$UNTRUSTED_TEXT_OR_JSON" | "$PLUGIN_ROOT/scripts/seccheck-gate"
+printf '%s\n' "$UNTRUSTED_TEXT_OR_JSON" | "$PLUGIN_ROOT/scripts/sancheck-gate"
 ```
 
 ### Direct URL Form
 
 ```bash
-"$PLUGIN_ROOT/scripts/seccheck-gate" https://example.com
+"$PLUGIN_ROOT/scripts/sancheck-gate" https://example.com
 ```
 
 ### Output
@@ -69,7 +69,7 @@ Missing provider keys are reported as `skipped`, not as clean results.
 
 ## Creating Custom Skills
 
-You can create custom skills by adding new directories under `plugins/seccheck/skills/`. Each skill should have a `SKILL.md` file with:
+You can create custom skills by adding new directories under `plugins/sancheck/skills/`. Each skill should have a `SKILL.md` file with:
 
 1. **Frontmatter**: `name` and `description` fields.
 2. **Purpose**: What the skill does.

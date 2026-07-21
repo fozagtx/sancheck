@@ -8,7 +8,7 @@ export default function HomePage() {
         Codex Plugin
       </div>
       <h1 className="text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-        seccheck
+        sancheck
       </h1>
       <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600">
         URL safety middleware for agent workflows. Scan links before a build tool,

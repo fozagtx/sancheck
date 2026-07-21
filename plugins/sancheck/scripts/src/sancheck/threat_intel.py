@@ -14,7 +14,7 @@ def check_google_safe_browsing(url: str, options: ScanOptions) -> ProviderResult
         return ProviderResult("google_safe_browsing", "skipped", {"reason": "GOOGLE_SAFE_BROWSING_API_KEY is not set"})
     endpoint = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=%s" % urllib.parse.quote(key)
     payload = {
-        "client": {"clientId": "seccheck", "clientVersion": "0.1.0"},
+        "client": {"clientId": "sancheck", "clientVersion": "0.1.0"},
         "threatInfo": {
             "threatTypes": ["MALWARE", "SOCIAL_ENGINEERING", "UNWANTED_SOFTWARE", "POTENTIALLY_HARMFUL_APPLICATION"],
             "platformTypes": ["ANY_PLATFORM"],

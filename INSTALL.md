@@ -4,8 +4,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/fozagtx/seccheck.git
-cd seccheck
+git clone https://github.com/fozagtx/sancheck.git
+cd sancheck
 
 # Install in development mode
 pip install -e .
@@ -14,11 +14,11 @@ pip install -e .
 pip install .
 ```
 
-After installation, you can run seccheck from anywhere:
+After installation, you can run sancheck from anywhere:
 
 ```bash
-seccheck scan https://example.com --format json
-seccheck gate --stdin < urls.txt
+sancheck scan https://example.com --format json
+sancheck gate --stdin < urls.txt
 ```
 
 ### As a Codex Plugin
@@ -27,19 +27,19 @@ The plugin is self-contained and doesn't require Python package installation:
 
 ```bash
 # Clone the repository
-git clone https://github.com/fozagtx/seccheck.git
-cd seccheck
+git clone https://github.com/fozagtx/sancheck.git
+cd sancheck
 
 # The plugin is ready to use at:
-# plugins/seccheck/
+# plugins/sancheck/
 
 # Test it works:
-plugins/seccheck/scripts/seccheck-gate https://example.com
+plugins/sancheck/scripts/sancheck-gate https://example.com
 ```
 
 To install the plugin in Codex:
-1. Copy the `plugins/seccheck` directory to your Codex plugins folder
-2. Or symlink it: `ln -s $(pwd)/plugins/seccheck ~/.codex/plugins/seccheck`
+1. Copy the `plugins/sancheck` directory to your Codex plugins folder
+2. Or symlink it: `ln -s $(pwd)/plugins/sancheck ~/.codex/plugins/sancheck`
 3. Restart Codex to load the plugin
 
 ## Supported Platforms
@@ -88,13 +88,13 @@ PYTHONPATH=src python3 -m pytest tests/ -v
 
 ```bash
 # Test with a safe URL
-PYTHONPATH=src python3 -m seccheck scan https://example.com --format json
+PYTHONPATH=src python3 -m sancheck scan https://example.com --format json
 
 # Test with a private IP (should block)
-PYTHONPATH=src python3 -m seccheck scan http://127.0.0.1 --format json
+PYTHONPATH=src python3 -m sancheck scan http://127.0.0.1 --format json
 
 # Test the middleware contract
-printf 'check https://example.com' | ./scripts/seccheck-gate
+printf 'check https://example.com' | ./scripts/sancheck-gate
 ```
 
 ### Test with API Keys
@@ -102,22 +102,22 @@ printf 'check https://example.com' | ./scripts/seccheck-gate
 ```bash
 # Test with VirusTotal
 export VIRUSTOTAL_API_KEY="your-key-here"
-PYTHONPATH=src python3 -m seccheck scan https://example.com --format json
+PYTHONPATH=src python3 -m sancheck scan https://example.com --format json
 
 # Test with Google Safe Browsing
 export GOOGLE_SAFE_BROWSING_API_KEY="your-key-here"
-PYTHONPATH=src python3 -m seccheck scan https://example.com --format json
+PYTHONPATH=src python3 -m sancheck scan https://example.com --format json
 ```
 
 ### Test the Plugin
 
 ```bash
 # Test plugin gate script
-plugins/seccheck/scripts/seccheck-gate https://example.com
+plugins/sancheck/scripts/sancheck-gate https://example.com
 
 # Test with stdin
-echo "Check https://example.com" | plugins/seccheck/scripts/seccheck-gate
+echo "Check https://example.com" | plugins/sancheck/scripts/sancheck-gate
 
 # Test with JSON input
-echo '{"text": "open https://example.com"}' | plugins/seccheck/scripts/seccheck-gate
+echo '{"text": "open https://example.com"}' | plugins/sancheck/scripts/sancheck-gate
 ```

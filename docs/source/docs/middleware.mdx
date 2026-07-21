@@ -5,12 +5,12 @@ description: The stdin-to-JSON contract for agent workflows.
 
 # Middleware Contract
 
-seccheck acts as middleware between an agent and untrusted URLs. The contract is simple: text or JSON in, JSON decision out.
+sancheck acts as middleware between an agent and untrusted URLs. The contract is simple: text or JSON in, JSON decision out.
 
 ## Contract Overview
 
 ```
-stdin (text or JSON) → seccheck → stdout (JSON decision) + exit code
+stdin (text or JSON) → sancheck → stdout (JSON decision) + exit code
 ```
 
 | Exit Code | Meaning |
@@ -23,28 +23,28 @@ stdin (text or JSON) → seccheck → stdout (JSON decision) + exit code
 
 ### Plain Text
 
-seccheck extracts URLs from any text:
+sancheck extracts URLs from any text:
 
 ```bash
-printf 'Check out https://example.com and http://test.org' | ./scripts/seccheck-gate
+printf 'Check out https://example.com and http://test.org' | ./scripts/sancheck-gate
 ```
 
 ### JSON with Text Field
 
 ```bash
-printf '{"text":"open https://example.com"}' | ./scripts/seccheck-gate
+printf '{"text":"open https://example.com"}' | ./scripts/sancheck-gate
 ```
 
 ### JSON with URL Array
 
 ```bash
-printf '{"urls":["https://example.com","http://test.org"]}' | ./scripts/seccheck-gate
+printf '{"urls":["https://example.com","http://test.org"]}' | ./scripts/sancheck-gate
 ```
 
 ### Direct URL Arguments
 
 ```bash
-./scripts/seccheck-gate https://example.com http://test.org
+./scripts/sancheck-gate https://example.com http://test.org
 ```
 
 ## Output Format
@@ -53,7 +53,7 @@ The gate emits a JSON payload with the following structure:
 
 ```json
 {
-  "tool": "seccheck",
+  "tool": "sancheck",
   "mode": "middleware",
   "decision": "allow",
   "allowed": true,
@@ -103,7 +103,7 @@ The `decision` field is determined by:
 The `url-gate` skill instructs the agent:
 
 ```bash
-printf '%s\n' "$UNTRUSTED_TEXT" | "$PLUGIN_ROOT/scripts/seccheck-gate"
+printf '%s\n' "$UNTRUSTED_TEXT" | "$PLUGIN_ROOT/scripts/sancheck-gate"
 ```
 
 The agent continues only if exit `0` and `"allowed": true`.
@@ -113,7 +113,7 @@ The agent continues only if exit `0` and `"allowed": true`.
 ```yaml
 - name: Gate URLs
   run: |
-    printf '%s' "$URLS" | ./scripts/seccheck-gate
+    printf '%s' "$URLS" | ./scripts/sancheck-gate
     if [ $? -eq 2 ]; then
       echo "URLs blocked"
       exit 1
@@ -125,8 +125,8 @@ The agent continues only if exit `0` and `"allowed": true`.
 ```bash
 #!/bin/bash
 URLS=$(grep -oE 'https?://[^ ]+' README.md)
-printf '%s\n' $URLS | ./scripts/seccheck-gate > /tmp/seccheck.json
-if [ $(jq -r '.allowed' /tmp/seccheck.json) != "true" ]; then
+printf '%s\n' $URLS | ./scripts/sancheck-gate > /tmp/sancheck.json
+if [ $(jq -r '.allowed' /tmp/sancheck.json) != "true" ]; then
   echo "Blocked URLs found"
   exit 1
 fi
@@ -138,10 +138,10 @@ The `--allow-verdict` flag controls the maximum verdict allowed by policy:
 
 ```bash
 # Allow safe and caution verdicts
-./scripts/seccheck-gate --allow-verdict caution https://example.com
+./scripts/sancheck-gate --allow-verdict caution https://example.com
 
 # Allow only safe verdicts (default)
-./scripts/seccheck-gate --allow-verdict safe https://example.com
+./scripts/sancheck-gate --allow-verdict safe https://example.com
 ```
 
 ## Next Steps

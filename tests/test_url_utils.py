@@ -1,6 +1,6 @@
 import unittest
 
-from seccheck.url_utils import extract_urls, normalize_url
+from sancheck.url_utils import extract_urls, normalize_url
 
 
 class UrlUtilsTests(unittest.TestCase):

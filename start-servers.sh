@@ -2,7 +2,7 @@
 
 # Start the landing page dev server
 echo "Starting landing page on http://localhost:5173..."
-cd /Users/kaizen/Desktop/seccheck
+cd /Users/kaizen/Desktop/sancheck
 npm run dev &
 LANDING_PID=$!
 
@@ -11,7 +11,7 @@ sleep 3
 
 # Start the docs dev server
 echo "Starting docs on http://localhost:3333/docs..."
-cd /Users/kaizen/Desktop/seccheck/docs
+cd /Users/kaizen/Desktop/sancheck/docs
 npm run dev &
 DOCS_PID=$!
 

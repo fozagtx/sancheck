@@ -1,18 +1,18 @@
 ---
 title: Scanner API
-description: Python API reference for the seccheck scanner.
+description: Python API reference for the sancheck scanner.
 ---
 
 # Scanner API
 
-seccheck provides a Python API for programmatic use.
+sancheck provides a Python API for programmatic use.
 
 ## scan_url
 
 Scan a single URL and return a `ScanReport`.
 
 ```python
-from seccheck import scan_url, ScanOptions
+from sancheck import scan_url, ScanOptions
 
 report = scan_url("https://example.com")
 print(report.verdict)  # "safe"
@@ -52,7 +52,7 @@ print(report.allowed_for_agent)  # True
 Configure the scanner behavior.
 
 ```python
-from seccheck import ScanOptions
+from sancheck import ScanOptions
 
 options = ScanOptions(
     timeout=10.0,
@@ -76,7 +76,7 @@ options = ScanOptions(
 | `verify_tls` | `bool` | `True` | Verify TLS certificates |
 | `enable_threat_intel` | `bool` | `True` | Enable threat intel providers |
 | `check_domain_age` | `bool` | `True` | Check domain age via RDAP |
-| `user_agent` | `str` | `seccheck/0.1` | User agent string |
+| `user_agent` | `str` | `sancheck/0.1` | User agent string |
 
 ## Finding
 
@@ -110,7 +110,7 @@ class ProviderResult:
 Extract URLs from text.
 
 ```python
-from seccheck.url_utils import extract_urls
+from sancheck.url_utils import extract_urls
 
 urls = extract_urls("Check https://example.com and http://test.org")
 # ["https://example.com", "http://test.org"]
@@ -119,7 +119,7 @@ urls = extract_urls("Check https://example.com and http://test.org")
 ## Example: Batch Scan
 
 ```python
-from seccheck import scan_url, ScanOptions
+from sancheck import scan_url, ScanOptions
 
 urls = ["https://example.com", "https://test.org"]
 options = ScanOptions(timeout=10.0)

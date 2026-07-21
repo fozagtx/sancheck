@@ -8,8 +8,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | seccheck',
-    default: 'seccheck',
+    template: '%s | sancheck',
+    default: 'sancheck',
   },
   description: 'URL safety middleware for Codex agent workflows.',
 };

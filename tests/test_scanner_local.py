@@ -2,8 +2,8 @@ import threading
 import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from seccheck.models import ScanOptions
-from seccheck.scanner import scan_url
+from sancheck.models import ScanOptions
+from sancheck.scanner import scan_url
 
 
 class LocalHandler(BaseHTTPRequestHandler):

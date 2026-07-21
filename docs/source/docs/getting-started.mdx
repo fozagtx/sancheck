@@ -1,17 +1,17 @@
 ---
 title: Getting Started
-description: Install and run seccheck in under a minute.
+description: Install and run sancheck in under a minute.
 ---
 
 # Getting Started
 
-seccheck is a Python package with zero external dependencies. It runs on Python 3.9+ and uses only the standard library for all network checks.
+sancheck is a Python package with zero external dependencies. It runs on Python 3.9+ and uses only the standard library for all network checks.
 
 ## Install from Source
 
 ```bash
-git clone https://github.com/your-org/seccheck.git
-cd seccheck
+git clone https://github.com/your-org/sancheck.git
+cd sancheck
 pip install -e .
 ```
 
@@ -20,7 +20,7 @@ pip install -e .
 Scan a single URL:
 
 ```bash
-PYTHONPATH=src python3 -m seccheck scan https://example.com --format text
+PYTHONPATH=src python3 -m sancheck scan https://example.com --format text
 ```
 
 Example output:
@@ -37,7 +37,7 @@ Findings: none
 The gate command extracts URLs from any text and returns a JSON decision:
 
 ```bash
-PYTHONPATH=src python3 -m seccheck gate https://example.com --format json
+PYTHONPATH=src python3 -m sancheck gate https://example.com --format json
 ```
 
 ## Use the Middleware
@@ -45,7 +45,7 @@ PYTHONPATH=src python3 -m seccheck gate https://example.com --format json
 The middleware command reads stdin and returns a JSON allow/block decision:
 
 ```bash
-printf 'check https://example.com' | ./scripts/seccheck-gate
+printf 'check https://example.com' | ./scripts/sancheck-gate
 ```
 
 ## Exit Codes
@@ -58,6 +58,6 @@ printf 'check https://example.com' | ./scripts/seccheck-gate
 
 ## Next Steps
 
-- [Codex Plugin](/docs/plugin) — learn how to use seccheck as a Codex plugin
+- [Codex Plugin](/docs/plugin) — learn how to use sancheck as a Codex plugin
 - [URL Gate](/docs/url-gate) — understand how URLs are extracted and validated
-- [Middleware Contract](/docs/middleware) — integrate seccheck into agent workflows
+- [Middleware Contract](/docs/middleware) — integrate sancheck into agent workflows

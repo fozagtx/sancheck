@@ -1,18 +1,18 @@
 ---
 title: CLI Reference
-description: Full command reference for the seccheck CLI.
+description: Full command reference for the sancheck CLI.
 ---
 
 # CLI Reference
 
-seccheck provides four commands: `scan`, `gate`, `middleware`, and `extract`.
+sancheck provides four commands: `scan`, `gate`, `middleware`, and `extract`.
 
 ## scan
 
 Scan one or more URLs and print the results.
 
 ```bash
-PYTHONPATH=src python3 -m seccheck scan <url> [url...] [options]
+PYTHONPATH=src python3 -m sancheck scan <url> [url...] [options]
 ```
 
 ### Arguments
@@ -28,7 +28,7 @@ All [common options](#common-options) are supported.
 ### Example
 
 ```bash
-PYTHONPATH=src python3 -m seccheck scan https://example.com --format json
+PYTHONPATH=src python3 -m sancheck scan https://example.com --format json
 ```
 
 ## gate
@@ -36,7 +36,7 @@ PYTHONPATH=src python3 -m seccheck scan https://example.com --format json
 Gate URLs from args or stdin for agent-safe use.
 
 ```bash
-PYTHONPATH=src python3 -m seccheck gate [url...] [options]
+PYTHONPATH=src python3 -m sancheck gate [url...] [options]
 ```
 
 ### Arguments
@@ -57,7 +57,7 @@ All [common options](#common-options) are supported.
 ### Example
 
 ```bash
-PYTHONPATH=src python3 -m seccheck gate --stdin --format json < message.md
+PYTHONPATH=src python3 -m sancheck gate --stdin --format json < message.md
 ```
 
 ## middleware
@@ -65,7 +65,7 @@ PYTHONPATH=src python3 -m seccheck gate --stdin --format json < message.md
 Agent middleware: read stdin or URLs and emit a JSON allow/block decision.
 
 ```bash
-PYTHONPATH=src python3 -m seccheck middleware [url...] [options]
+PYTHONPATH=src python3 -m sancheck middleware [url...] [options]
 ```
 
 ### Arguments
@@ -85,7 +85,7 @@ All [common options](#common-options) are supported.
 ### Example
 
 ```bash
-printf 'check https://example.com' | ./scripts/seccheck-gate
+printf 'check https://example.com' | ./scripts/sancheck-gate
 ```
 
 ## extract
@@ -93,7 +93,7 @@ printf 'check https://example.com' | ./scripts/seccheck-gate
 Extract URLs from a file or stdin.
 
 ```bash
-PYTHONPATH=src python3 -m seccheck extract <file>
+PYTHONPATH=src python3 -m sancheck extract <file>
 ```
 
 ### Arguments
@@ -105,7 +105,7 @@ PYTHONPATH=src python3 -m seccheck extract <file>
 ### Example
 
 ```bash
-PYTHONPATH=src python3 -m seccheck extract README.md
+PYTHONPATH=src python3 -m sancheck extract README.md
 ```
 
 ## Common Options

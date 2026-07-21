@@ -1,6 +1,6 @@
 import unittest
 
-from seccheck.prompt_injection import analyze_prompt_injection
+from sancheck.prompt_injection import analyze_prompt_injection
 
 
 class PromptInjectionTests(unittest.TestCase):

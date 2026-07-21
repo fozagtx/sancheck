@@ -1,5 +1,0 @@
-#!/usr/bin/env sh
-set -eu
-
-PLUGIN_ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
-PYTHONPATH="$PLUGIN_ROOT/scripts/src${PYTHONPATH:+:$PYTHONPATH}" exec python3 -m seccheck middleware "$@"

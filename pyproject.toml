@@ -13,7 +13,7 @@ authors = [{ name = "sancheck maintainers" }]
 dependencies = []
 
 [project.scripts]
-sancheck = "seccheck.cli:main"
+sancheck = "sancheck.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

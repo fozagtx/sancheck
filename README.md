@@ -6,6 +6,11 @@
 
 No mock verdicts are used. Network checks are live. Google Safe Browsing, VirusTotal, and PhishTank run only when real API credentials are present; otherwise their checks are reported as `skipped`.
 
+## 📚 Documentation
+
+- 📖 **[How Codex & GPT-5.6 Were Used](CODEX_USAGE.md)** - Detailed breakdown of Codex usage, development workflow, and key decisions
+- 📦 **[Installation & Setup Guide](INSTALL.md)** - Full installation instructions, supported platforms, and testing guide
+
 ## Built with Codex
 
 **Codex Session ID**: `019f8658-5272-7480-ae44-3a4ebd620ba2`
@@ -18,10 +23,6 @@ Built using Codex with GPT-5.6:
 - Prompt injection detection patterns
 - Threat intel provider integrations
 - CLI interface and middleware contract
-
-📖 **[How Codex & GPT-5.6 Were Used](CODEX_USAGE.md)** - Detailed breakdown of Codex usage, development workflow, and key decisions
-
-📦 **[Installation & Setup Guide](INSTALL.md)** - Full installation instructions, supported platforms, and testing guide
 
 ## What It Checks
 

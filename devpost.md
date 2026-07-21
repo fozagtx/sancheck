@@ -12,7 +12,9 @@ It includes a CLI gate, a middleware command, and a bundled Codex plugin package
 
 ## How we built it
 
-The scanner core is built in Python with the standard library so it can run locally with minimal setup. The pipeline normalizes the URL, resolves DNS, applies SSRF protections, validates TLS, fetches a bounded response sample, analyzes the content for hostile agent instructions, and assembles a weighted findings report.
+The scanner core was built using Codex with GPT-5.6 (Session ID: `019f8658-5272-7480-ae44-3a4ebd620ba2`). Codex accelerated development by generating the URL normalization logic, DNS resolution with SSRF protection, TLS validation, HTTP client implementation, and prompt injection detection patterns. Key architectural decisions like the middleware contract (stdin in, JSON out, exit codes) and the weighted findings system were made during Codex sessions.
+
+The scanner is built in Python with the standard library so it can run locally with minimal setup. The pipeline normalizes the URL, resolves DNS, applies SSRF protections, validates TLS, fetches a bounded response sample, analyzes the content for hostile agent instructions, and assembles a weighted findings report.
 
 The plugin bundles the scanner source with a small shell wrapper and a skill file that tells agents when to gate links. The web surface is a static Vite and React landing page built with HeroUI primitives, using the generated sancheck logo and favicon assets.
 

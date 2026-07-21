@@ -1,5 +1,3 @@
-# seccheck
-
 ## Inspiration
 
 Security tools often treat links as simple strings, while agent workflows treat links as instructions, context, and executable next steps. seccheck was inspired by the need for a real preflight gate that checks a URL before an AI-assisted developer workflow opens, summarizes, or acts on it.

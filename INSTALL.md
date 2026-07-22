@@ -42,7 +42,11 @@ plugins/sancheck/scripts/sancheck-gate https://example.com
 To install the plugin in Codex:
 1. Copy the `plugins/sancheck` directory to your Codex plugins folder
 2. Or symlink it: `ln -s $(pwd)/plugins/sancheck ~/.codex/plugins/sancheck`
-3. Restart Codex to load the plugin
+3. Put API keys on your PC in a local `.env` (not in the Codex app UI), for example:
+   - `~/.codex/plugins/sancheck/.env`, or
+   - `.env` in the project folder you open with Codex
+4. Copy from `.env.example`, fill `VIRUSTOTAL_API_KEY` / `GOOGLE_SAFE_BROWSING_API_KEY` / `PHISHTANK_APP_KEY`
+5. Restart Codex to load the plugin
 
 ## Supported Platforms
 

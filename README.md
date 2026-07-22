@@ -154,12 +154,16 @@ The plugin emits JSON and exits with:
 
 The plugin is a skill plus the same `sancheck-gate` script (local gate, same as CLI).
 
-1. Export provider keys in your shell (see below).
-2. Start Codex from that same shell so the gate process inherits the env.
+API keys stay on your PC. You do not paste them into the Codex app. Put them in a local `.env` (or export them in the shell), then start Codex.
+
+1. Install the plugin (see INSTALL.md).
+2. Add keys in one of these places:
+   - `.env` in the project you open with Codex, or
+   - `.env` next to the installed plugin (for example `~/.codex/plugins/sancheck/.env`)
 3. On a task with URLs, the `url-gate` skill tells Codex to run `sancheck-gate` first.
 4. Exit `0` and `"allowed": true` → Codex continues. Exit `2` → Codex stops and reports the blocked URL.
 
-`sancheck-gate` reads API keys from the environment. Codex passes the env through when it runs the script.
+`sancheck-gate` loads `.env` automatically and also reads exported environment variables.
 
 Example task:
 ```
@@ -186,7 +190,7 @@ export VIRUSTOTAL_API_KEY="..."
 export PHISHTANK_APP_KEY="..."
 ```
 
-Unset keys show as `skipped`. For Codex, start it from this repo after `.env` exists, or export the same keys in that shell.
+Unset keys show as `skipped`. Keys are for your machine / `.env`, not a Codex cloud settings panel.
 
 CLI check that providers are live:
 ```sh

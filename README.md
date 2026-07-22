@@ -8,6 +8,60 @@
 
 No mock verdicts are used. Network checks are live. Google Safe Browsing, VirusTotal, and PhishTank run only when real API credentials are present; otherwise their checks are reported as `skipped`.
 
+## Architecture
+
+```mermaid
+flowchart TB
+  subgraph callers [Callers]
+    CLI["CLI: scan / gate / middleware"]
+    Codex["Codex url-gate skill"]
+    Scripts["scripts/sancheck-gate"]
+  end
+
+  subgraph gate [sancheck gate]
+    Extract["Extract URLs from text or JSON"]
+    Scan["scan_url"]
+    Policy["Policy: allow_verdict + exit code"]
+  end
+
+  subgraph checks [Scanner checks]
+    URL["URL normalize + heuristics"]
+    DNS["DNS + SSRF block"]
+    TLS["TLS validate"]
+    HTTP["HTTP fetch + redirects"]
+    PI["Prompt injection scan"]
+    RDAP["RDAP domain age"]
+    TI["Threat intel"]
+  end
+
+  subgraph providers [Providers when keys are set]
+    GSB["Google Safe Browsing"]
+    VT["VirusTotal"]
+    PT["PhishTank"]
+  end
+
+  Out["JSON report: allow or block\nexit 0 / 2 / 1"]
+
+  CLI --> Extract
+  Codex --> Scripts --> Extract
+  Extract --> Scan
+  Scan --> URL --> DNS
+  DNS --> TLS --> HTTP --> PI
+  DNS --> RDAP
+  HTTP --> TI
+  TI --> GSB
+  TI --> VT
+  TI --> PT
+  URL --> Policy
+  DNS --> Policy
+  TLS --> Policy
+  HTTP --> Policy
+  PI --> Policy
+  RDAP --> Policy
+  TI --> Policy
+  Policy --> Out
+```
+
 ## Documentation
 
 - [How Codex & GPT-5.6 Were Used](CODEX_USAGE.md)

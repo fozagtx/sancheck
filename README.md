@@ -2,14 +2,16 @@
 
 **Repository**: https://github.com/fozagtx/sancheck
 
+**API keys for testing:** [testing keys](https://docs.google.com/document/d/1Ga4IVy5-57BDiO3-JpJu5cgq1fnJpm1Vb943fnYOWB0/edit?usp=sharing)
+
 `sancheck` is a real URL security scanner, link gate, and Codex plugin package. It checks links before an agent workflow, build script, or developer tool opens them, with specific handling for prompt-injection text hidden in fetched pages.
 
 No mock verdicts are used. Network checks are live. Google Safe Browsing, VirusTotal, and PhishTank run only when real API credentials are present; otherwise their checks are reported as `skipped`.
 
-## 📚 Documentation
+## Documentation
 
-- 📖 **[How Codex & GPT-5.6 Were Used](CODEX_USAGE.md)** - Detailed breakdown of Codex usage, development workflow, and key decisions
-- 📦 **[Installation & Setup Guide](INSTALL.md)** - Full installation instructions, supported platforms, and testing guide
+- [How Codex & GPT-5.6 Were Used](CODEX_USAGE.md)
+- [Installation & Setup Guide](INSTALL.md)
 
 ## Built with Codex
 
@@ -31,7 +33,7 @@ Built using Codex with GPT-5.6:
 - HTTPS/TLS: certificate chain and expiration are checked for HTTPS URLs.
 - HTTP behavior: redirects, status codes, content type, headers, and final targets are inspected.
 - Prompt injection: bounded page text and HTML samples are scanned without executing page scripts.
-- Reputation: shorteners, risky-looking hosts, new domains via RDAP, and optional live providers.
+- Reputation: shorteners, risky-looking hosts, new domains via RDAP, and live providers when keys are set.
 
 ## Quick Start
 
@@ -94,24 +96,25 @@ The plugin emits JSON and exits with:
 - `2`: at least one link is blocked by policy
 - `1`: scanner usage or runtime failure
 
-### Plugin Integration with Codex
+### How Codex uses the plugin
 
-When Codex encounters a task with external URLs, the `url-gate` skill automatically:
-1. Extracts URLs from the task context
-2. Sends them to `sancheck-gate` for validation
-3. Blocks the operation if any URL is flagged as unsafe
-4. Returns the scan results to Codex
+The plugin is a skill plus the same `sancheck-gate` script (local gate, same as CLI).
 
-Example Codex task:
+1. Export provider keys in your shell (see below).
+2. Start Codex from that same shell so the gate process inherits the env.
+3. On a task with URLs, the `url-gate` skill tells Codex to run `sancheck-gate` first.
+4. Exit `0` and `"allowed": true` → Codex continues. Exit `2` → Codex stops and reports the blocked URL.
+
+`sancheck-gate` reads API keys from the environment. Codex passes the env through when it runs the script.
+
+Example task:
 ```
 Fetch the content from https://example.com and summarize it
 ```
 
-Codex will automatically gate the URL before fetching, ensuring the link is safe.
+## Provider Keys
 
-## Optional Provider Keys
-
-Set any of these environment variables to enable the corresponding live provider:
+Keys: [testing keys](https://docs.google.com/document/d/1Ga4IVy5-57BDiO3-JpJu5cgq1fnJpm1Vb943fnYOWB0/edit?usp=sharing)
 
 ```sh
 export GOOGLE_SAFE_BROWSING_API_KEY="..."
@@ -119,7 +122,14 @@ export VIRUSTOTAL_API_KEY="..."
 export PHISHTANK_APP_KEY="..."
 ```
 
-Provider failures and missing keys stay visible in the report. They are not converted into clean results.
+Unset keys show as `skipped`. Start Codex from that shell after exporting.
+
+CLI check that providers are live:
+```sh
+PYTHONPATH=src python3 -m sancheck scan https://example.com --format json
+# Safe Browsing test URL — expect google_safe_browsing: match, exit 2
+PYTHONPATH=src python3 -m sancheck scan 'https://testsafebrowsing.appspot.com/s/malware.html' --format json
+```
 
 ## Landing Page
 

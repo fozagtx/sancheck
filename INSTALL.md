@@ -1,5 +1,7 @@
 ## Installation
 
+**API keys for testing:** [testing keys](https://docs.google.com/document/d/1Ga4IVy5-57BDiO3-JpJu5cgq1fnJpm1Vb943fnYOWB0/edit?usp=sharing)
+
 ### As a Python Package
 
 ```bash
@@ -61,7 +63,6 @@ To install the plugin in Codex:
 
 **Network Requirements:**
 - Internet connection for DNS resolution and HTTP requests
-- Optional: API keys for Google Safe Browsing, VirusTotal, PhishTank
 
 ## Testing
 

@@ -5,6 +5,8 @@ description: Gate URLs with the bundled sancheck scanner before an agent opens, 
 
 # sancheck URL Gate
 
+**API keys for testing:** [testing keys](https://docs.google.com/document/d/1Ga4IVy5-57BDiO3-JpJu5cgq1fnJpm1Vb943fnYOWB0/edit?usp=sharing)
+
 Use this skill whenever a task includes external links or asks you to open, fetch, summarize, inspect, crawl, or act on an untrusted URL.
 
 ## Workflow
@@ -31,12 +33,10 @@ The gate emits JSON with `decision`, `allowed`, `blocked_urls`, and full `report
 
 ## Provider Keys
 
-The scanner uses live DNS, TLS, HTTP, RDAP, and content checks by default. Optional provider checks run only when these environment variables are set:
-
 ```sh
 GOOGLE_SAFE_BROWSING_API_KEY
 VIRUSTOTAL_API_KEY
 PHISHTANK_APP_KEY
 ```
 
-Missing provider keys are reported as skipped, not as clean results.
+Missing keys show as skipped, not as clean results.

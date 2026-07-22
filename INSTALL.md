@@ -101,6 +101,13 @@ PYTHONPATH=src python3 -m pytest tests/ -v
 
 Paste each command as one full line. Prefer `--format=json` with an `=` so line wraps cannot break the flag.
 
+If you see VirusTotal `Wrong API key`, clear a bad shell export first (keep the real key on one line in `.env`):
+
+```bash
+unset VIRUSTOTAL_API_KEY
+unset GOOGLE_SAFE_BROWSING_API_KEY
+```
+
 ```bash
 # Allow (providers should be clean, not skipped, when .env is set)
 PYTHONPATH=src python3 -m sancheck scan https://github.com --format=json

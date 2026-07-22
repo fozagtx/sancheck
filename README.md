@@ -93,6 +93,13 @@ Built using Codex with GPT-5.6:
 
 From the repo root, after `cp .env.example .env` and filling keys. Paste each command as one full line (do not break `--format=json`).
 
+If you earlier exported a broken key (line wrap / Wrong API key), clear it first:
+
+```sh
+unset VIRUSTOTAL_API_KEY
+unset GOOGLE_SAFE_BROWSING_API_KEY
+```
+
 Allow check:
 
 ```sh
@@ -179,6 +186,8 @@ PHISHTANK_APP_KEY=your_api_key_here
 ```
 
 `.env` is gitignored and loaded automatically. Unset keys show as `skipped`.
+
+If VirusTotal returns `Wrong API key`, the key was probably split across lines in the shell. Run `unset VIRUSTOTAL_API_KEY`, keep the key on one line in `.env`, then scan again.
 
 Then use the Quick Start commands above (one command per line, use `--format=json`).
 

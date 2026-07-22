@@ -29,11 +29,12 @@ def _parse_env_file(path: str) -> None:
                 continue
             key, value = line.split("=", 1)
             key = key.strip()
-            if not key or key in os.environ:
+            if not key:
                 continue
             value = value.strip()
             if len(value) >= 2 and value[0] == value[-1] and value[0] in ("'", '"'):
                 value = value[1:-1]
+            # Project .env wins over a broken/stale shell export.
             os.environ[key] = value
 
 

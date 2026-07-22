@@ -66,7 +66,7 @@ def scan_url(raw_url: str, options: Optional[ScanOptions] = None) -> ScanReport:
         findings.append(Finding(check="url", severity="critical", message=str(exc), evidence={"input": raw_url}))
         return _empty_report(raw_url, None, findings, error=str(exc))
 
-    findings.extend(url_heuristics(raw_url, normalized))
+    findings.extend(url_heuristics(raw_url, normalized, allow_private=options.allow_private))
     parsed = split_url(normalized)
     host, port = hostname_port(parsed)
 

@@ -1,9 +1,25 @@
+import ipaddress
 import math
 import re
 from typing import Any, Dict, List
 from urllib.parse import unquote, urlsplit
 
 from .models import Finding
+
+
+def _non_public_ip_literal(host: str) -> bool:
+    try:
+        ip = ipaddress.ip_address(host)
+    except ValueError:
+        return False
+    return bool(
+        ip.is_private
+        or ip.is_loopback
+        or ip.is_link_local
+        or ip.is_multicast
+        or ip.is_reserved
+        or ip.is_unspecified
+    )
 
 
 SHORTENERS = {
@@ -72,7 +88,7 @@ def _entropy(value: str) -> float:
     return entropy
 
 
-def url_heuristics(raw_url: str, normalized_url: str) -> List[Finding]:
+def url_heuristics(raw_url: str, normalized_url: str, allow_private: bool = False) -> List[Finding]:
     parsed = urlsplit(normalized_url)
     findings: List[Finding] = []
     host = parsed.hostname or ""
@@ -80,17 +96,51 @@ def url_heuristics(raw_url: str, normalized_url: str) -> List[Finding]:
     decoded_path = unquote(parsed.path + ("?" + parsed.query if parsed.query else ""))
     host_tokens = set(re.split(r"[^a-z0-9]+", host.lower()))
     path_tokens = set(re.split(r"[^a-z0-9]+", decoded_path.lower()))
+    private_literal = allow_private and _non_public_ip_literal(host)
 
     if parsed.scheme != "https":
-        findings.append(Finding(check="url", severity="medium", message="URL does not use HTTPS.", evidence={"scheme": parsed.scheme}))
+        if private_literal:
+            findings.append(
+                Finding(
+                    check="url",
+                    severity="info",
+                    message="URL does not use HTTPS on an explicitly allowed private target.",
+                    weight=0,
+                    evidence={"scheme": parsed.scheme},
+                )
+            )
+        else:
+            findings.append(Finding(check="url", severity="medium", message="URL does not use HTTPS.", evidence={"scheme": parsed.scheme}))
     if "@" in urlsplit(raw_url if "://" in raw_url else "https://" + raw_url).netloc:
         findings.append(Finding(check="url", severity="high", message="URL contains userinfo/@ syntax that can hide the real host."))
     if host.startswith("xn--") or ".xn--" in host:
         findings.append(Finding(check="url", severity="medium", message="Hostname uses punycode; inspect for lookalike characters.", evidence={"host": host}))
     if re.fullmatch(r"\d+\.\d+\.\d+\.\d+", host):
-        findings.append(Finding(check="url", severity="medium", message="URL uses an IPv4 literal instead of a domain.", evidence={"host": host}))
+        if private_literal:
+            findings.append(
+                Finding(
+                    check="url",
+                    severity="info",
+                    message="URL uses a private/loopback IPv4 literal and private targets are explicitly allowed.",
+                    weight=0,
+                    evidence={"host": host},
+                )
+            )
+        else:
+            findings.append(Finding(check="url", severity="medium", message="URL uses an IPv4 literal instead of a domain.", evidence={"host": host}))
     if parsed.port and parsed.port not in (80, 443):
-        findings.append(Finding(check="url", severity="medium", message="URL uses an uncommon port.", evidence={"port": parsed.port}))
+        if private_literal:
+            findings.append(
+                Finding(
+                    check="url",
+                    severity="info",
+                    message="URL uses a non-standard port on an explicitly allowed private target.",
+                    weight=0,
+                    evidence={"port": parsed.port},
+                )
+            )
+        else:
+            findings.append(Finding(check="url", severity="medium", message="URL uses an uncommon port.", evidence={"port": parsed.port}))
     if host in SHORTENERS:
         findings.append(Finding(check="url", severity="medium", message="URL uses a public link shortener.", evidence={"host": host}))
     if tld in SUSPICIOUS_TLDS:

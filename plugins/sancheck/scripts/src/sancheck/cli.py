@@ -66,13 +66,13 @@ def _dedupe_urls(urls: Iterable[str]) -> List[str]:
 
 
 def _reports_payload(reports: List[ScanReport], allow_verdict: str, mode: str) -> Dict[str, Any]:
-    blocked = [report for report in reports if not _allowed_by_policy(report, allow_verdict) or not report.allowed_for_agent]
+    blocked = [report for report in reports if not _allowed_by_policy(report, allow_verdict)]
     return {
         "tool": "sancheck",
         "mode": mode,
         "allowed": len(blocked) == 0,
         "decision": "allow" if len(blocked) == 0 else "block",
-        "policy": {"allow_verdict": allow_verdict, "agent_strict": True},
+        "policy": {"allow_verdict": allow_verdict, "agent_strict": allow_verdict == "safe"},
         "url_count": len(reports),
         "blocked_urls": [report.original_url for report in blocked],
         "reports": [report.to_dict() for report in reports],
@@ -139,7 +139,7 @@ def command_gate(args: argparse.Namespace) -> int:
         elif payload["allowed"]:
             print("Allowed: all %d URL(s) passed." % len(deduped))
         else:
-            blocked = [report for report in reports if not _allowed_by_policy(report, args.allow_verdict) or not report.allowed_for_agent]
+            blocked = [report for report in reports if not _allowed_by_policy(report, args.allow_verdict)]
             print("Blocked: %d of %d URL(s) failed policy." % (len(blocked), len(deduped)))
             for report in blocked:
                 print("- %s -> %s (%s risk)" % (report.original_url, report.verdict, report.risk_score))

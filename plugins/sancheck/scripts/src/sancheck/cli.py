@@ -3,6 +3,7 @@ import json
 import sys
 from typing import Any, Dict, Iterable, List
 
+from .env_file import load_env_file
 from .models import ScanOptions, ScanReport
 from .scanner import scan_url
 from .url_utils import extract_urls

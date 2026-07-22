@@ -170,13 +170,23 @@ Fetch the content from https://example.com and summarize it
 
 Keys: [testing keys](https://docs.google.com/document/d/1Ga4IVy5-57BDiO3-JpJu5cgq1fnJpm1Vb943fnYOWB0/edit?usp=sharing)
 
+Copy `.env.example` to `.env` and fill in keys. `sancheck` loads `.env` from the repo root automatically (`.env` is gitignored).
+
+```sh
+cp .env.example .env
+# edit .env, then:
+PYTHONPATH=src python3 -m sancheck scan https://github.com --format=json
+```
+
+Or export in the shell:
+
 ```sh
 export GOOGLE_SAFE_BROWSING_API_KEY="..."
 export VIRUSTOTAL_API_KEY="..."
 export PHISHTANK_APP_KEY="..."
 ```
 
-Unset keys show as `skipped`. Start Codex from that shell after exporting.
+Unset keys show as `skipped`. For Codex, start it from this repo after `.env` exists, or export the same keys in that shell.
 
 CLI check that providers are live:
 ```sh

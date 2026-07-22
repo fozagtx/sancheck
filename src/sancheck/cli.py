@@ -3,6 +3,7 @@ import json
 import sys
 from typing import Any, Dict, Iterable, List
 
+from .env_file import load_env_file
 from .models import ScanOptions, ScanReport
 from .scanner import scan_url
 from .url_utils import extract_urls
@@ -220,6 +221,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: List[str] = None) -> int:
+    load_env_file()
     parser = build_parser()
     args = parser.parse_args(argv)
     try:

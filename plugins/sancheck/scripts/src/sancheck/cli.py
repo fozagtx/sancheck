@@ -221,6 +221,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: List[str] = None) -> int:
+    load_env_file()
     parser = build_parser()
     args = parser.parse_args(argv)
     try:

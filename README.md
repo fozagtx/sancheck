@@ -91,29 +91,32 @@ Built using Codex with GPT-5.6:
 
 ## Quick Start
 
-Scan one URL:
+From the repo root, after `cp .env.example .env` and filling keys. Paste each command as one full line (do not break `--format=json`).
+
+Allow check:
 
 ```sh
-PYTHONPATH=src python3 -m sancheck scan https://example.com --format text
+PYTHONPATH=src python3 -m sancheck scan https://github.com --format=json
 ```
 
-Use the middleware contract:
+Expect `google_safe_browsing` and `virustotal` as `clean` (not `skipped`). Exit `0`.
+
+Block check (Google Safe Browsing test URL):
 
 ```sh
-printf 'check https://example.com' | ./scripts/sancheck-gate
+PYTHONPATH=src python3 -m sancheck scan https://testsafebrowsing.appspot.com/s/malware.html --format=json; echo exit:$?
 ```
 
-Gate links from a prompt or Markdown file:
+Expect `google_safe_browsing: match` and `exit:2`.
+
+Plugin / gate (same binary Codex calls):
 
 ```sh
-PYTHONPATH=src python3 -m sancheck gate --stdin --format json < message.md
+plugins/sancheck/scripts/sancheck-gate https://github.com
+plugins/sancheck/scripts/sancheck-gate https://testsafebrowsing.appspot.com/s/malware.html; echo exit:$?
 ```
 
-Exit codes:
-
-- `0`: all scanned links are allowed.
-- `2`: at least one link is blocked by policy.
-- `1`: scanner usage or runtime failure.
+Exit codes: `0` allow, `2` block, `1` error.
 
 ## Codex Plugin Package
 
@@ -132,72 +135,52 @@ The plugin contains:
 
 ### Using the Plugin
 
-The bundled gate works without installing the Python package:
+No Python package install needed. From repo root (with `.env` present):
 
 ```sh
-# Scan from stdin (text or JSON)
-printf '{"text":"open https://example.com"}' | plugins/sancheck/scripts/sancheck-gate
-
-# Scan a URL directly
-plugins/sancheck/scripts/sancheck-gate https://example.com
-
-# Gate URLs from a file
-cat urls.txt | plugins/sancheck/scripts/sancheck-gate
+plugins/sancheck/scripts/sancheck-gate https://github.com
+plugins/sancheck/scripts/sancheck-gate https://testsafebrowsing.appspot.com/s/malware.html; echo exit:$?
 ```
 
-The plugin emits JSON and exits with:
-- `0`: all scanned links are allowed
-- `2`: at least one link is blocked by policy
-- `1`: scanner usage or runtime failure
+Same exit codes as CLI: `0` allow, `2` block, `1` error.
 
 ### How Codex uses the plugin
 
 The plugin is a skill plus the same `sancheck-gate` script (local gate, same as CLI).
 
-API keys stay on your PC. You do not paste them into the Codex app. Put them in a local `.env` (or export them in the shell), then start Codex.
+API keys stay on your PC in `.env`. Do not paste keys into the Codex app UI or into the chat. Codex runs the gate locally; the chat only sees the allow/block JSON report (not the secret values).
 
 1. Install the plugin (see INSTALL.md).
-2. Add keys in one of these places:
-   - `.env` in the project you open with Codex, or
-   - `.env` next to the installed plugin (for example `~/.codex/plugins/sancheck/.env`)
-3. On a task with URLs, the `url-gate` skill tells Codex to run `sancheck-gate` first.
-4. Exit `0` and `"allowed": true` → Codex continues. Exit `2` → Codex stops and reports the blocked URL.
+2. Put `.env` in the project you open with Codex, or next to the installed plugin (`~/.codex/plugins/sancheck/.env`).
+3. Start Codex. On a task with URLs, the `url-gate` skill runs `sancheck-gate` first.
+4. Exit `0` + `"allowed": true` → continue. Exit `2` → stop and report the blocked URL.
 
-`sancheck-gate` loads `.env` automatically and also reads exported environment variables.
+`sancheck-gate` loads `.env` automatically.
 
-Example task:
+Example Codex task:
 ```
-Fetch the content from https://example.com and summarize it
+Fetch https://github.com and summarize the landing page
 ```
 
 ## Provider Keys
 
 Keys: [testing keys](https://docs.google.com/document/d/1Ga4IVy5-57BDiO3-JpJu5cgq1fnJpm1Vb943fnYOWB0/edit?usp=sharing)
 
-Copy `.env.example` to `.env` and fill in keys. `sancheck` loads `.env` from the repo root automatically (`.env` is gitignored).
-
 ```sh
 cp .env.example .env
-# edit .env, then:
-PYTHONPATH=src python3 -m sancheck scan https://github.com --format=json
 ```
 
-Or export in the shell:
+Edit `.env` like this (real values, not the placeholder text):
 
 ```sh
-export GOOGLE_SAFE_BROWSING_API_KEY="..."
-export VIRUSTOTAL_API_KEY="..."
-export PHISHTANK_APP_KEY="..."
+GOOGLE_SAFE_BROWSING_API_KEY=your_api_key_here
+VIRUSTOTAL_API_KEY=your_api_key_here
+PHISHTANK_APP_KEY=your_api_key_here
 ```
 
-Unset keys show as `skipped`. Keys are for your machine / `.env`, not a Codex cloud settings panel.
+`.env` is gitignored and loaded automatically. Unset keys show as `skipped`.
 
-CLI check that providers are live:
-```sh
-PYTHONPATH=src python3 -m sancheck scan https://example.com --format json
-# Safe Browsing test URL: expect google_safe_browsing: match, exit 2
-PYTHONPATH=src python3 -m sancheck scan 'https://testsafebrowsing.appspot.com/s/malware.html' --format json
-```
+Then use the Quick Start commands above (one command per line, use `--format=json`).
 
 ## Landing Page
 

@@ -33,10 +33,12 @@ The gate emits JSON with `decision`, `allowed`, `blocked_urls`, and full `report
 
 ## Provider Keys
 
+Keys live in a local `.env` on the machine (project root or plugin root). Do not ask the user to paste keys into chat.
+
 ```sh
-GOOGLE_SAFE_BROWSING_API_KEY
-VIRUSTOTAL_API_KEY
-PHISHTANK_APP_KEY
+GOOGLE_SAFE_BROWSING_API_KEY=your_api_key_here
+VIRUSTOTAL_API_KEY=your_api_key_here
+PHISHTANK_APP_KEY=your_api_key_here
 ```
 
-Missing keys show as skipped, not as clean results.
+`sancheck-gate` loads `.env` automatically. Missing keys show as skipped, not as clean results.

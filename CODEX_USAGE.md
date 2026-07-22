@@ -40,4 +40,4 @@ Order of work:
 6. Tests
 7. Packaged as a Codex plugin
 
-Roughly 15–20 hours saved. Scanner core is ~2000 lines of Python. Codex did the boilerplate; I spent time on the security logic and edge cases.
+Roughly 15-20 hours saved. Scanner core is ~2000 lines of Python. Codex did the boilerplate; I spent time on the security logic and edge cases.

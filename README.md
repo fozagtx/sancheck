@@ -127,7 +127,7 @@ Unset keys show as `skipped`. Start Codex from that shell after exporting.
 CLI check that providers are live:
 ```sh
 PYTHONPATH=src python3 -m sancheck scan https://example.com --format json
-# Safe Browsing test URL — expect google_safe_browsing: match, exit 2
+# Safe Browsing test URL: expect google_safe_browsing: match, exit 2
 PYTHONPATH=src python3 -m sancheck scan 'https://testsafebrowsing.appspot.com/s/malware.html' --format json
 ```
 
